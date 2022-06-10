@@ -1,0 +1,6 @@
+xtick.labelsize: 14
+ytick.labelsize: 14
+font.size: 17
+legend.fontsize: 10
+mathtext.fontset: stix
+font.family: STIXGeneral
