@@ -15,8 +15,10 @@ from msa_functions import generate_replicates
 plt.style.use('paper.mplstyle')
 
 # GLOBAL PARAMETERS
-DIR_ROOT = "D:\\bootstrap\\"
-DIR_DCA_CODE = "C:\\Users\\kmehr\\MATLAB Drive\\Research\\dca_package"
+# DIR_ROOT = "D:\\bootstrap\\"
+# DIR_DCA_CODE = "C:\\Users\\kmehr\\MATLAB Drive\\Research\\dca_package"
+DIR_ROOT = "bootstrap"
+DIR_DCA_CODE = "Users\\euler\\MATLAB-Drive\\Research\\Scripts\\mf_plm_reweight"
 
 
 def make_dir_struct(pfam_id):
