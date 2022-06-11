@@ -101,8 +101,8 @@ def pipeline_inference(pfam_id, matlab_input, model_length, pseudocount, theta):
         eng = matlab.engine.start_matlab()
         eng.addpath(DIR_DCA_CODE, nargout=0)
         eng.addpath(output_dir, nargout=0)
-        neffective = eng.dca_pairdist(matlab_input, file_dca_output, file_matrix_output, pseudocount,
-                                      theta, nargout=1)
+        neffective = eng.dca_h_J_Full_v4(matlab_input, file_dca_output, file_matrix_output, pseudocount,
+                                         theta, nargout=1)
         eng.quit()
         return neffective
     else:
