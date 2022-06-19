@@ -17,22 +17,23 @@ plt.style.use('paper.mplstyle')
 # GLOBAL PARAMETERS
 # DIR_ROOT = "D:\\bootstrap\\"
 # DIR_DCA_CODE = "C:\\Users\\kmehr\\MATLAB Drive\\Research\\dca_package"
-DIR_ROOT = "bootstrap"
-DIR_DCA_CODE = "Users\\euler\\MATLAB-Drive\\Research\\Scripts\\mf_plm_reweight"
+USER = os.path.expanduser("~")
+DIR_ROOT = "systems"
+DIR_DCA_CODE = os.path.join(USER, "MATLAB-Drive", "Research", "Scripts", "mf_plm_reweight")
 
 
-def make_dir_struct(pfam_id):
+def make_dir_struct(_pfamid):
     # DIRECTORY STRUCTURE INITIALIZATION
-    dir_sys = os.path.join(DIR_ROOT, pfam_id)
+    dir_sys = os.path.join(DIR_ROOT, _pfamid)
+    dir_aln = os.path.join(DIR_ROOT, "psicov_systems", "aln")
     dir_results = os.path.join(dir_sys, "results")
     dir_avg_results = os.path.join(dir_results, "average_ppv")
-    dir_pdb = os.path.join(dir_sys, "PDB")
+    dir_pdb = os.path.join(DIR_ROOT, "psicov_systems", "pdb")
     dir_dist_mat = os.path.join(dir_pdb, "distance_matrix")
     dir_replicates = os.path.join(dir_sys, "replicates")
-    dir_nseq_list = os.path.join(dir_replicates, "length_list.txt")
 
     # MAKE DIRECTORY IF DOESNT EXIST
-    list_dir = [dir_sys, dir_results, dir_avg_results, dir_pdb, dir_dist_mat, dir_replicates, dir_nseq_list]
+    list_dir = [dir_sys, dir_results, dir_avg_results, dir_pdb, dir_dist_mat, dir_replicates]
     for entry in list_dir:
         if not os.path.exists(entry):
             os.makedirs(entry)
@@ -95,14 +96,13 @@ def pipeline_inference(pfam_id, matlab_input, model_length, pseudocount, theta):
     output_dir = os.path.join(os.path.dirname(matlab_input), f"mf\\pc{pseudocount:.1f}\\")
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    file_dca_output = os.path.join(f"{output_dir}", f"DI_{pfam_id}_n{model_length}.txt")
-    file_matrix_output = os.path.join(f"{output_dir}", f"matrix_{pfam_id}_n{model_length}.mat")
+    file_dca_output = os.path.join(output_dir, f"DI_{pfam_id}_n{model_length}.txt")
+    file_matrix_output = os.path.join(output_dir, f"matrix_{pfam_id}_n{model_length}.mat")
     if not os.path.exists(file_dca_output):
         eng = matlab.engine.start_matlab()
         eng.addpath(DIR_DCA_CODE, nargout=0)
         eng.addpath(output_dir, nargout=0)
-        neffective = eng.dca_h_J_Full_v4(matlab_input, file_dca_output, file_matrix_output, pseudocount,
-                                         theta, nargout=1)
+        neffective = eng.dca_h_J_Full_v5(theta, matlab_input, file_dca_output, file_matrix_output, nargout=1)
         eng.quit()
         return neffective
     else:
@@ -111,7 +111,7 @@ def pipeline_inference(pfam_id, matlab_input, model_length, pseudocount, theta):
 
 def neff_calculation(matlab_input, theta):
     eng = matlab.engine.start_matlab()
-    code_dir = "C:\\Users\\kmehr\\MATLAB Drive\\Research\\Scripts\\plm-code"
+    code_dir = os.path.join(USER, "MATLAB Drive", "Research", "Scripts", "plm-code")
     function_dir = "C:\\Users\\kmehr\\MATLAB Drive\\Research\\Scripts\\plm-code\\functions"
     eng.addpath(code_dir, nargout=0)
     eng.addpath(function_dir, nargout=0)
@@ -184,7 +184,6 @@ def pipeline_process_results(pfam_id, pdb_id, dca_in, dir_system, pc, pdb_datafr
     from map_v2 import map_dca
     from map_dca import mapit
     """
-
     :param theta_flag:
     :param load_processed:
     :param dca_in: Str
@@ -224,7 +223,8 @@ def pipeline_process_results(pfam_id, pdb_id, dca_in, dir_system, pc, pdb_datafr
         else:
             # ZSCORE
             df_z = zscore_calculation(df_rank, score_type)
-            mapping_file = os.path.join("C:\\Users\\kmehr\\PycharmProjects\\idp_trimer", "pdb_pfam_mapping.txt")
+            mapping_file = os.path.join("C:\\Users\\kmehr\\PycharmProjects\\sequence_degradation",
+                                        "pdb_pfam_mapping.txt")
             df_mapping = pd.read_csv(mapping_file, delimiter="\t", header=0, comment="#")
 
             pdb_ = df_mapping[df_mapping.PDB == pdb_id]
@@ -343,7 +343,7 @@ def top_contact_map(dca_dataframe, pdbid, n_effective, xy_lim, pdb_dataframe, di
 
 
 def plot_score_distribution(dca_score, n_seqs, dca_dataframe, n_effective, n_res, img_dir, theta):
-    plt.figure(n_seqs, figsize=(5,5))
+    plt.figure(n_seqs, figsize=(5, 5))
     heights, bins, patches = plt.hist(dca_dataframe[dca_score], bins=50)
     plt.semilogy()
     if theta > 0:
@@ -368,7 +368,7 @@ def plot_score_distribution(dca_score, n_seqs, dca_dataframe, n_effective, n_res
 
 
 def plot_dist_distribution(dca_dataframe, n_effective, n_res, img_dir):
-    plt.figure(8927384929, figsize=(5,5))
+    plt.figure(8927384929, figsize=(5, 5))
     heights, bins, patches = plt.hist(dca_dataframe["d"], bins=50, color="red", edgecolor="black")
     plt.ylim(0, 20)
     plt.title(f"Neff={n_effective}, Neff/L={n_effective / n_res:.2f}")
@@ -539,22 +539,19 @@ def plot_ppv(zfilter, ppv_list, neff_value, pfamid, sequence_len, threshold_val,
     plt.close()
 
 
-def pipeline_replicates(pfam_id, pdb_id, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, dir_system, dca_score, ncols,
-                        model_lengths,
-                        neffective_array, thresholds_list, pdbid, seqlen, pfamid, pc, dca_mode,
+def pipeline_replicates(pfamid, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, dir_system, dca_score, ncols,
+                        model_lengths, neffective_array, thresholds_list, pdbid, seqlen, pc, dca_mode,
                         zfilter=True, npairs=0, plots=False, load=False, passthrough=False):
     """
     For every replicate and model, process raw DCA results, calculate Zscores, and PPV
     :param dir_system:
     :param pfam_id:
-    :param pdb_id:
     :param DIR_PDB:
     :param pc:
     :param dca_mode:
     :param DIR_RESULTS:
     :param DIR_REPLICATES:
     :param seqlen:
-    :param pfamid:
     :param ncols:
     :param pdbid:
     :param npairs: to use in plotting ranked pairs
@@ -572,16 +569,16 @@ def pipeline_replicates(pfam_id, pdb_id, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, d
     avg_neff = neffective_array.mean(axis=0)
     # CONTROL PPV OUTFILE NAME DEPENDING ON ZFILTER VALUE
     if zfilter:
-        output_ppv = os.path.join(f"{DIR_RESULTS}\\average_ppv", f"{pdbid}_ppv_zscore_{dca_score}_100reps.npy")
-        output_norm = os.path.join(f"{DIR_RESULTS}\\average_ppv", f"ppv_norm_z_{dca_score}_reps100.npy")
+        output_ppv = os.path.join(DIR_RESULTS, "average_ppv", f"{pdbid}_ppv_zscore_{dca_score}_100reps.npy")
+        output_norm = os.path.join(DIR_RESULTS, "average_ppv", f"ppv_norm_z_{dca_score}_reps100.npy")
     else:
         if npairs > 0:
-            output_ppv = os.path.join(f"{DIR_RESULTS}\\average_ppv",
+            output_ppv = os.path.join(DIR_RESULTS, "average_ppv",
                                       f"{pdbid}_ppv_top{npairs}_{dca_score}_100reps.npy")
         else:
-            output_ppv = os.path.join(f"{DIR_RESULTS}\\average_ppv",
+            output_ppv = os.path.join(DIR_RESULTS, "average_ppv",
                                       f"{pdbid}_ppv_top{thresholds_list[-1]}_{dca_score}_100reps.npy")
-            output_norm = os.path.join(f"{DIR_RESULTS}\\average_ppv",
+            output_norm = os.path.join(DIR_RESULTS, "average_ppv",
                                        f"ppv_norm_top{thresholds_list[-1]}_{dca_score}_reps100.npy")
 
     # IF ALREADY CALCULATED LOAD PPV FILE
@@ -601,8 +598,8 @@ def pipeline_replicates(pfam_id, pdb_id, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, d
             num_pairs_left = np.zeros_like(pos_pred_list)
         for rep_id in range(n_replicates):
             # Make directories for results and plots
-            dir_dca_results = f"{DIR_REPLICATES}\\sub{rep_id}\\{dca_mode}\\pc{pc}\\"
-            dir_contact_map = f"{dir_dca_results}images\\"
+            dir_dca_results = os.path.join(DIR_REPLICATES, "sub{rep_id}", dca_mode, f"pc{pc}")
+            dir_contact_map = os.path.join(dir_dca_results, "images")
             if not os.path.exists(dir_contact_map):
                 os.makedirs(dir_contact_map)
 
@@ -612,7 +609,7 @@ def pipeline_replicates(pfam_id, pdb_id, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, d
 
                 neff = int(neffective_array[rep_id][model_id])
                 # OUTPUT ZSCORE
-                df_dca, map_idx = pipeline_process_results(pfam_id, pdb_id, raw_dca_output, dir_system, pc, df_pdb,
+                df_dca, map_idx = pipeline_process_results(pfamid, pdbid, raw_dca_output, dir_system, pc, df_pdb,
                                                            dca_score, neff, theta_flag=False, load_processed=load)
                 draw_publish_dca(pfamid, df_dca, "A", dir_contact_map)
                 # matrix = into_matrix(df_dca)
@@ -643,8 +640,8 @@ def pipeline_replicates(pfam_id, pdb_id, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, d
 
                     if len(df_filtered) > 0:
                         # ppv, tpfp = calculate_ppv(df_filtered, distance_cutoff)
-                        ppv=np.zeros(10)
-                        tpfp=np.zeros(10)
+                        ppv = np.zeros(10)
+                        tpfp = np.zeros(10)
                         if plots:
                             # plot_ppv(zfilter, ppv, neff, pfamid, seqlen, threshold_value, dir_contact_map)
                             print("PPV")
@@ -661,187 +658,101 @@ def pipeline_replicates(pfam_id, pdb_id, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, d
         return pos_pred_list, num_pairs_left
 
 
-def run_theta(pfam_id, DIR_RESULTS, msa_input, nthetas, pseudocount, passthrough=False):
-    # THETA CHANGES
-    dir_output_theta = os.path.join(f"{DIR_RESULTS}", "theta")
-    neff_file = os.path.join(dir_output_theta, "neff_array_theta.npy")
-    print(f"NEFF_FILE: {neff_file}")
-    if passthrough:
-        print(f"DIR: {dir_output_theta}")
-        neff = np.load(neff_file)
-    else:
-        neff = np.zeros(nthetas)
-        print("START MATLAB")
-        for theta_idx in range(nthetas):
-            theta = (theta_idx + 1) * 0.1
-            if not os.path.exists(dir_output_theta):
-                os.makedirs(dir_output_theta)
-            dca_output = os.path.join(dir_output_theta, f"DI_{pfam_id}_t{theta:.2f}.txt")
-            matrix_output = os.path.join(dir_output_theta, f"matrix_{pfam_id}_t{theta:.2f}.mat")
-            if not os.path.exists(dca_output):
-                print(f"theta:{theta}\tMSA_IN: {msa_input}\nDCA_OUT: {dca_output}\nMAT_OUT: {matrix_output}")
-                eng = matlab.engine.start_matlab()
-                eng.addpath(DIR_DCA_CODE, nargout=0)
-                eng.addpath(dir_output_theta, nargout=0)
-                neff[theta_idx] = eng.dca_pairdist(msa_input, dca_output, matrix_output, pseudocount,
-                                                   theta, nargout=1)
-            else:
-                print(f"ALREADY RAN -> THETA:{theta}\tMSA_IN: {msa_input}\n"
-                      f"DCA_OUT: {dca_output}\nMAT_OUT: {matrix_output}")
-        print(f"DIR: {dir_output_theta}")
-        np.save(neff_file, neff)
-        return neff
+# def bootstrap(system_entry, dca_mode="mf", zbool=True, passthrough=False):
+pc = 0.2
+reweighting = 0.2
+nrep = 100
+score = "diapc"
 
+# pfam_id = system_entry.pfam_id
+# pdb_id = system_entry.pdb_id
+pfam_id = "1a3aA"
+pdb_id = pfam_id + ".pdb"
 
-def pipeline_reweighing(DIR_RESULTS, DIR_PDB, pfam_id, pdb_id, pc, dca_score, ncols, model_lengths, thresholds_list,
-                        zfilter=True, npairs=0, plots=False, load=False, passthrough=False):
-    distance_cutoff = 8
-    DIR_THETA = os.path.join(DIR_RESULTS, "theta")
-    DIR_CONTACT_MAP = os.path.join(DIR_THETA, "images")
-    if not os.path.exists(DIR_CONTACT_MAP):
-        os.makedirs(DIR_CONTACT_MAP)
-    if zfilter:
-        output_ppv = os.path.join(DIR_THETA, f"{pdb_id}_ppv_zscore_{dca_score}_theta.npy")
-    else:
-        if npairs > 0:
-            output_ppv = os.path.join(DIR_THETA, f"{pdb_id}_ppv_top{npairs}_{dca_score}_theta.npy")
-        else:
-            output_ppv = os.path.join(DIR_THETA, f"{pdb_id}_ppv_top30_{dca_score}_theta.npy")
+DIR_SYS, DIR_ALN, DIR_RESULTS, DIR_AVG_RESULTS, DIR_PDB, DIR_DIST_MAT, DIR_REPLICATES = make_dir_struct(pfam_id)
+# file_raw_msa = os.path.join(DIR_SYS, f"{pfam_id}_full.txt")
+file_raw_msa = os.path.join(DIR_ALN, f"{pfam_id}.fa")
 
-    if passthrough:
-        return np.load(output_ppv)
-    else:
-        n_thetas = 10
-        df_pdb = pipeline_pdb(pdb_id, DIR_PDB)
-
-        if npairs > 0:
-            pos_pred_list = np.zeros((len(thresholds_list), n_thetas, npairs))
-        else:
-            pos_pred_list = np.zeros(n_thetas)
-            # pos_pred_list = np.zeros((len(thresholds_list), n_thetas))
-        # Loop through theta values
-        ppv = []
-        for k in range(n_thetas):
-            theta = (k + 1) * 0.1
-            raw_dca_output = os.path.join(DIR_THETA, f"DI_{pfam_id}_t{theta:.2f}.txt")
-            df_dca, map_idx = pipeline_process_results(pfam_id, pdb_id, raw_dca_output, DIR_SYS, pc, df_pdb, dca_score,
-                                                       theta, theta_flag=True, load_processed=load)
-            assert df_dca is not None
-            print(f"theta: {theta}  L: {ncols}")
-            if plots:
-                # plot_score_distribution(dca_score, n_degraded_seqs, df_dca, neff, ncols, DIR_CONTACT_MAP)
-                if zfilter:
-                    plot_score_distribution("zscore", k, df_dca, 0, ncols, DIR_CONTACT_MAP, theta)
-                    # top_contact_map(df_dca, pdb_id, 0, ncols + map_idx, df_pdb, distance_cutoff,
-                    #                 DIR_CONTACT_MAP, theta)
-            # Loop through every threshold and calculate PPV
-            for ii in range(len(thresholds_list)):
-                threshold_value = thresholds_list[ii]
-                if zfilter:
-                    df_filtered = df_dca[df_dca["zscore"] >= threshold_value]
-                    if plots:
-                        print(f"{threshold_value}")
-                        # zscore_contact_map(df_filtered, pdb_id, 0, ncols + map_idx, df_pdb, distance_cutoff,
-                        #                    DIR_CONTACT_MAP,
-                        #                    threshold_value, theta)
-                else:
-                    df_filtered = df_dca[:threshold_value]
-            # Calculate PPV and then save as npy file
-            ppv.append([calculate_ppv(df_dca, distance_cutoff), df_dca["zscore"].to_numpy()])
-            pos_pred = np.array(ppv)
-        np.save(output_ppv, pos_pred)
-
-    return pos_pred
-
-
-def bootstrap(system_entry, dca_mode="mf", zbool=True, passthrough=False):
-    pc = 0.2
-    reweighting = 0.2
-    nrep = 100
-    score = "diapc"
-
-    pfam_id = system_entry.pfam_id
-    pdb_id = system_entry.pdb_id
-
-    DIR_SYS, DIR_RESULTS, DIR_AVG_RESULTS, DIR_PDB, DIR_DIST_MAT, DIR_REPLICATES, nseq_list = make_dir_struct(pfam_id)
-    file_raw_msa = os.path.join(DIR_SYS, f"{pfam_id}_full.txt")
-
-    assert os.path.exists(file_raw_msa)
-
+if os.path.exists(file_raw_msa):
     file_filtered_msa = os.path.join(DIR_SYS, f"{pfam_id}_full_filtered_25.fasta")
-    # 1. Gap filter
-    if not os.path.exists(file_filtered_msa):
-        file_filtered_msa, nseq, percent_gaps = gap_filter(file_raw_msa, 0.25)
+else:
+    print(f"{file_raw_msa} does not exist.")
+# 1. Gap filter
+if not os.path.exists(file_filtered_msa):
+    file_filtered_msa, nseq, percent_gaps = gap_filter(file_raw_msa, 0.25)
 
-    # Read in filtered MSA
-    # 2. Check filesize
-    seq_l = check_length(file_filtered_msa)
+# Read in filtered MSA
+# 2. Check filesize
+seq_l = check_length(file_filtered_msa)
 
-    # Read list of lengths generated by gen_replicates
-    if os.path.exists(nseq_list):
-        with open(nseq_list, "r") as fp:
-            list_of_len = [int(line.rstrip()) for line in fp]
-            assert list_of_len[-1] > 0
-    else:
-        # 3. Replicate generation
-        list_of_len = generate_replicates(file_filtered_msa, nrep)
+# Read list of lengths generated by gen_replicates
+nseq_list = os.path.join(DIR_REPLICATES, "length_list.txt")
+if os.path.exists(nseq_list):
+    with open(nseq_list, "r") as fp:
+        list_of_len = [int(line.rstrip()) for line in fp]
+        assert list_of_len[-1] > 0
+else:
+    # 3. Replicate generation
+    list_of_len = generate_replicates(file_filtered_msa, nrep)
 
-    # 4. RUN DCA FOR EACH REPLICATE ENSEMBLE
+# 4. RUN DCA FOR EACH REPLICATE ENSEMBLE
+zbool = True
+dca_mode = "mf"
+if zbool:
+    threshold_values = [12, 10, 9, 8, 5.6, 4.5, 4, 3.5, 2.5, 1]
+else:
+    threshold_values = np.arange(10, 110, 10)
+
+program = "replicates"
+if program == "replicates":
+    neff_array = run_replicates(pfam_id, list_of_len, nrep, DIR_REPLICATES, pc, reweighting, passthrough=False)
+    # neff_array = run_neff_calculation(list_of_len, nrep, DIR_REPLICATES, reweighting, passthrough=True)
+    ppv_array, norm_array = pipeline_replicates(pfam_id, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, DIR_SYS,
+                                                score, seq_l, list_of_len, neff_array, threshold_values, pdb_id,
+                                                seq_l, pc, dca_mode, zfilter=zbool, npairs=0, plots=True,
+                                                load=False, passthrough=False)
     if zbool:
-        threshold_values = [12, 10, 9, 8, 5.6, 4.5, 4, 3.5, 2.5, 1]
-    else:
-        threshold_values = np.arange(10, 110, 10)
+        plot_norms(norm_array, pfam_id, threshold_values, neff_array, score, seq_l, zfilter=zbool,
+                   dir_avg_results=DIR_AVG_RESULTS)
+    average_ppv(pfam_id, ppv_array, threshold_values, neff_array, score, seq_l, zfilter=zbool,
+                dir_avg_results=DIR_AVG_RESULTS)
+    # ranked_average_ppv(ppv_array, neff_array, score, seq_l)
+# if program == "theta":
+#                           run_theta(file_filtered_msa, 10, pc, passthrough=True)
+#                           ppv_array = pipeline_reweighing(score, seq_l, list_of_len, threshold_values, pdb_id, zfilter=zbool,
+#                           npairs=0, plots=False, load=True, passthrough=False)
+#                           n_thetas, nn = ppv_array.shape
+#                           for i in range(n_thetas):
+#                           theta_value = (i + 1) * 0.1
+#                           plt.plot(ppv_array[i][1], ppv_array[i][0])
+#                           plt.scatter(ppv_array[i][1], ppv_array[i][0], label=f"{theta_value:.2f}")
+#                           plt.legend(loc="best")
+#                           plt.ylim(0, 1)
+#                           plt.xlabel("zscore")
+#                           plt.ylabel("PPV")
+#                           plt.show()
 
-    program = "replicates"
-    if program == "replicates":
-        neff_array = run_replicates(pfam_id, list_of_len, nrep, DIR_REPLICATES, pc, reweighting, passthrough=True)
-        # neff_array = run_neff_calculation(list_of_len, nrep, DIR_REPLICATES, reweighting, passthrough=True)
-        ppv_array, norm_array = pipeline_replicates(pfam_id, pdb_id, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, DIR_SYS,
-                                                    score, seq_l, list_of_len, neff_array, threshold_values, pdb_id,
-                                                    seq_l, pfam_id, pc, dca_mode, zfilter=zbool, npairs=0, plots=True,
-                                                    load=True, passthrough=False)
-        if zbool:
-            plot_norms(norm_array, pfam_id, threshold_values, neff_array, score, seq_l, zfilter=zbool,
-                       dir_avg_results=DIR_AVG_RESULTS)
-        average_ppv(pfam_id, ppv_array, threshold_values, neff_array, score, seq_l, zfilter=zbool,
-                    dir_avg_results=DIR_AVG_RESULTS)
-        # ranked_average_ppv(ppv_array, neff_array, score, seq_l)
-    # if program == "theta":
-    #                           run_theta(file_filtered_msa, 10, pc, passthrough=True)
-    #                           ppv_array = pipeline_reweighing(score, seq_l, list_of_len, threshold_values, pdb_id, zfilter=zbool,
-    #                           npairs=0, plots=False, load=True, passthrough=False)
-    #                           n_thetas, nn = ppv_array.shape
-    #                           for i in range(n_thetas):
-    #                           theta_value = (i + 1) * 0.1
-    #                           plt.plot(ppv_array[i][1], ppv_array[i][0])
-    #                           plt.scatter(ppv_array[i][1], ppv_array[i][0], label=f"{theta_value:.2f}")
-    #                           plt.legend(loc="best")
-    #                           plt.ylim(0, 1)
-    #                           plt.xlabel("zscore")
-    #                           plt.ylabel("PPV")
-    #                           plt.show()
-
-    # plt.errorbar(range(10), avg_ppv[i], yerr=std_ppv[i], capsize=6)
-    # plt.scatter(range(len(avg_ppv[i])), avg_ppv[i], edgecolors="black", label=f"top{z_cutoff_list[i]}")
-    # plt.savefig(f"{DIR_RESULTS}theta\\zscore_ppv_theta.png", format="png", dpi=200, bbox_inches='tight')
-    # D = defaultdict(list)
-    # for i in range(10):
-    #     for s in zl:
-    #         D[f"{(i+1)*0.1}"].append(s["di"])
+# plt.errorbar(range(10), avg_ppv[i], yerr=std_ppv[i], capsize=6)
+# plt.scatter(range(len(avg_ppv[i])), avg_ppv[i], edgecolors="black", label=f"top{z_cutoff_list[i]}")
+# plt.savefig(f"{DIR_RESULTS}theta\\zscore_ppv_theta.png", format="png", dpi=200, bbox_inches='tight')
+# D = defaultdict(list)
+# for i in range(10):
+#     for s in zl:
+#         D[f"{(i+1)*0.1}"].append(s["di"])
 
 
 # INPUTS
-def run_boot():
-    sys_file = os.path.join(DIR_ROOT, "systems.csv")
-    df_systems = pd.read_csv(sys_file, header=0)
-    dca = "mf"
-    # df_systems = df_systems[5:]
-    for shp, sys_entry in df_systems.iterrows():
-        print(f"{sys_entry.pfam_id}, {sys_entry.pdb_id}")
-        if sys_entry.pfam_id == "PF00022":
-            bootstrap(sys_entry, dca_mode=dca, zbool=True, passthrough=False)
-        else:
-            bootstrap(sys_entry, dca_mode=dca, zbool=True, passthrough=False)
+# def run_boot():
+# sys_file = os.path.join(DIR_ROOT, "systems.csv")
+# df_systems = pd.read_csv(sys_file, header=0)
+# dca = "mf"
+# # df_systems = df_systems[5:]
+# for shp, sys_entry in df_systems.iterrows():
+#     print(f"{sys_entry.pfam_id}, {sys_entry.pdb_id}")
+#     if sys_entry.pfam_id == "PF00022":
+#         bootstrap(sys_entry, dca_mode=dca, zbool=True, passthrough=False)
+#     else:
+#         bootstrap(sys_entry, dca_mode=dca, zbool=True, passthrough=False)
 
 
-run_boot()
+# run_boot()
