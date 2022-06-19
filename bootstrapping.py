@@ -33,7 +33,7 @@ def make_dir_struct(_pfamid):
     dir_replicates = os.path.join(dir_sys, "replicates")
 
     # MAKE DIRECTORY IF DOESNT EXIST
-    list_dir = [dir_sys, dir_results, dir_avg_results, dir_pdb, dir_dist_mat, dir_replicates]
+    list_dir = [dir_sys, dir_aln, dir_results, dir_avg_results, dir_pdb, dir_dist_mat, dir_replicates]
     for entry in list_dir:
         if not os.path.exists(entry):
             os.makedirs(entry)
