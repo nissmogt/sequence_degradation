@@ -92,12 +92,12 @@ def pipeline_pdb(PDB_id, dir_pdb):
     return pdb_dataframe
 
 
-def pipeline_inference(pfam_id, matlab_input, model_length, pseudocount, theta):
+def pipeline_inference(_pfamid, matlab_input, model_length, pseudocount, theta):
     output_dir = os.path.join(os.path.dirname(matlab_input), f"mf\\pc{pseudocount:.1f}\\")
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    file_dca_output = os.path.join(output_dir, f"DI_{pfam_id}_n{model_length}.txt")
-    file_matrix_output = os.path.join(output_dir, f"matrix_{pfam_id}_n{model_length}.mat")
+    file_dca_output = os.path.join(output_dir, f"DI_{_pfamid}_n{model_length}.txt")
+    file_matrix_output = os.path.join(output_dir, f"matrix_{_pfamid}_n{model_length}.mat")
     if not os.path.exists(file_dca_output):
         eng = matlab.engine.start_matlab()
         eng.addpath(DIR_DCA_CODE, nargout=0)
@@ -109,10 +109,10 @@ def pipeline_inference(pfam_id, matlab_input, model_length, pseudocount, theta):
         return 0
 
 
-def neff_calculation(matlab_input, theta):
+def plm_neff_calculation(matlab_input, theta):
     eng = matlab.engine.start_matlab()
     code_dir = os.path.join(USER, "MATLAB Drive", "Research", "Scripts", "plm-code")
-    function_dir = "C:\\Users\\kmehr\\MATLAB Drive\\Research\\Scripts\\plm-code\\functions"
+    function_dir = os.path.join(USER, "MATLAB Drive", "Research", "Scripts", "plm-code", "functions")
     eng.addpath(code_dir, nargout=0)
     eng.addpath(function_dir, nargout=0)
     neffective = eng.neff_calc(matlab_input, theta, 6, nargout=1)
@@ -120,7 +120,7 @@ def neff_calculation(matlab_input, theta):
     return neffective
 
 
-def run_neff_calculation(pfam_id, len_list, nreplicates, outdir, theta, passthrough=False):
+def run_neff_calculation(_pfamid, len_list, nreplicates, outdir, theta, passthrough=False):
     output = os.path.join(outdir, "neff_array.npy")
     if passthrough:
         # Load neffective array
@@ -132,9 +132,9 @@ def run_neff_calculation(pfam_id, len_list, nreplicates, outdir, theta, passthro
             msa_rep_dir = os.path.join(outdir, f"sub{rep}")
             for model in range(len(len_list)):
                 model_length = len_list[model]
-                msa_input = os.path.join(msa_rep_dir, f"{pfam_id}_n{model_length}_sub{rep}.fasta")
-                print(f"PFAM: {pfam_id} REP: {rep} N{model}: {model_length}")
-                n_effective_array[rep][model] = neff_calculation(msa_input, theta)
+                msa_input = os.path.join(msa_rep_dir, f"{_pfamid}_n{model_length}_sub{rep}.fasta")
+                print(f"PFAM: {_pfamid} REP: {rep} N{model}: {model_length}")
+                n_effective_array[rep][model] = plm_neff_calculation(msa_input, theta)
 
         # Save Neff to file
         np.save(output, n_effective_array)
