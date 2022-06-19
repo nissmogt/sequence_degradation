@@ -543,15 +543,14 @@ def plot_ppv(zfilter, ppv_list, neff_value, pfamid, sequence_len, threshold_val,
     plt.close()
 
 
-def pipeline_replicates(pfamid, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, dir_system, dca_score, ncols,
-                        model_lengths, neffective_array, thresholds_list, pdbid, seqlen, pc, dca_mode,
+def pipeline_replicates(_pfamid, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, dir_system, dca_score, ncols,
+                        model_lengths, neffective_array, thresholds_list, pdbid, seqlen, _pc, dca_mode,
                         zfilter=True, npairs=0, plots=False, load=False, passthrough=False):
     """
     For every replicate and model, process raw DCA results, calculate Zscores, and PPV
     :param dir_system:
-    :param pfam_id:
     :param DIR_PDB:
-    :param pc:
+    :param _pc:
     :param dca_mode:
     :param DIR_RESULTS:
     :param DIR_REPLICATES:
@@ -602,20 +601,21 @@ def pipeline_replicates(pfamid, DIR_RESULTS, DIR_REPLICATES, DIR_PDB, dir_system
             num_pairs_left = np.zeros_like(pos_pred_list)
         for rep_id in range(n_replicates):
             # Make directories for results and plots
-            dir_dca_results = os.path.join(DIR_REPLICATES, "sub{rep_id}", dca_mode, f"pc{pc}")
+            dir_dca_results = os.path.join(DIR_REPLICATES, "sub{rep_id}", dca_mode, f"pc{_pc}")
             dir_contact_map = os.path.join(dir_dca_results, "images")
             if not os.path.exists(dir_contact_map):
                 os.makedirs(dir_contact_map)
 
             for model_id in range(len(model_lengths)):
                 n_degraded_seqs = avg_neff[model_id]
-                raw_dca_output = os.path.join(dir_dca_results, f"DI_{pfamid}_n{n_degraded_seqs}.txt")
+                raw_dca_output = os.path.join(dir_dca_results, f"DI_{_pfamid}_n{n_degraded_seqs}.txt")
 
                 neff = int(neffective_array[rep_id][model_id])
                 # OUTPUT ZSCORE
-                df_dca, map_idx = pipeline_process_results(pfamid, pdbid, raw_dca_output, dir_system, pc, df_pdb,
-                                                           dca_score, neff, theta_flag=False, load_processed=load)
-                draw_publish_dca(pfamid, df_dca, "A", dir_contact_map)
+                df_dca, map_idx = pipeline_process_results(_pfamid, pdbid, raw_dca_output, dir_system, _pc, df_pdb,
+                                                           dca_score, neff, theta_flag=False,
+                                                           load_processed=load, mapfile=False)
+                draw_publish_dca(_pfamid, df_dca, "A", dir_contact_map)
                 # matrix = into_matrix(df_dca)
                 assert df_dca is not None
                 print(f"rep: {rep_id} model: {n_degraded_seqs} neff: {neff}  L: {ncols} map:{map_idx}")
