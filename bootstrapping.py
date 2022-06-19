@@ -179,8 +179,8 @@ def zscore_calculation(dca_dataframe, dca_score):
     return dca_dataframe
 
 
-def pipeline_process_results(pfam_id, pdb_id, dca_in, dir_system, pc, pdb_dataframe, score_type, n_effective,
-                             theta_flag=False, load_processed=False):
+def pipeline_process_results(_pfamid, _pdbid, dca_in, dir_system, _pc, pdb_dataframe, score_type, n_effective,
+                             theta_flag=False, load_processed=False, mapfile=False):
     from map_v2 import map_dca
     from map_dca import mapit
     """
@@ -195,9 +195,9 @@ def pipeline_process_results(pfam_id, pdb_id, dca_in, dir_system, pc, pdb_datafr
     df_header = ["i", "j", "di", "zscore", "diapc", "mi", "d", "si", "sj", "chain_1", "chain_2", "resnames", "atom_id"]
     dir_dca_in = os.path.dirname(dca_in)
     if theta_flag:
-        outfile = os.path.join(dir_dca_in, f"{pfam_id}_t{n_effective:.2f}_pc{pc}_all.txt")
+        outfile = os.path.join(dir_dca_in, f"{_pfamid}_t{n_effective:.2f}_pc{_pc}_all.txt")
     else:
-        outfile = os.path.join(dir_dca_in, f"{pfam_id}_neff{n_effective}_pc{pc}_all.txt")
+        outfile = os.path.join(dir_dca_in, f"{_pfamid}_neff{n_effective}_pc{_pc}_all.txt")
     # os.remove(outfile)
     print(outfile)
     if load_processed:
@@ -213,9 +213,9 @@ def pipeline_process_results(pfam_id, pdb_id, dca_in, dir_system, pc, pdb_datafr
         # df_mapped = map_dca("2zwh_scan.txt", df_rank)
 
         # MAPPING TO PDB INDEX
-        if pdb_id == "1vhv":
-            hmmscan_file = os.path.join(dir_system, f"{pdb_id.lower()}_scan.txt")
-            df_mapped = mapit(df_rank, pdb_id, dir_system, align=hmmscan_file)
+        if _pdbid == "1vhv":
+            hmmscan_file = os.path.join(dir_system, f"{_pdbid.lower()}_scan.txt")
+            df_mapped = mapit(df_rank, _pdbid, dir_system, align=hmmscan_file)
 
             # ZSCORE
             df_z = zscore_calculation(df_mapped, score_type)
@@ -223,21 +223,25 @@ def pipeline_process_results(pfam_id, pdb_id, dca_in, dir_system, pc, pdb_datafr
         else:
             # ZSCORE
             df_z = zscore_calculation(df_rank, score_type)
-            mapping_file = os.path.join("C:\\Users\\kmehr\\PycharmProjects\\sequence_degradation",
-                                        "pdb_pfam_mapping.txt")
-            df_mapping = pd.read_csv(mapping_file, delimiter="\t", header=0, comment="#")
+            assert os.getcwd() == os.path.join(USER, "PycharmProjects", "sequence_degredation")
+            mapping_file = os.path.join(os.getcwd(), "pdb_pfam_mapping.txt")
+            if mapfile:
+                df_mapping = pd.read_csv(mapping_file, delimiter="\t", header=0, comment="#")
 
-            pdb_ = df_mapping[df_mapping.PDB == pdb_id]
-            pdb_chain = pdb_dataframe.chain_1[0]
-            pfam_entry = pdb_[pdb_.PFAM_ACCESSION == pfam_id]
-            chain_filter = pfam_entry[pfam_entry.CHAIN == pdb_chain]
-            pfam_start = int(chain_filter.AUTH_PDBRES_START)
-            pdb_entry = int(chain_filter.PDB_START)
+                pdb_ = df_mapping[df_mapping.PDB == _pdbid]
+                pdb_chain = pdb_dataframe.chain_1[0]
+                pfam_entry = pdb_[pdb_.PFAM_ACCESSION == _pfamid]
+                chain_filter = pfam_entry[pfam_entry.CHAIN == pdb_chain]
+                pfam_start = int(chain_filter.AUTH_PDBRES_START)
+                pdb_entry = int(chain_filter.PDB_START)
 
-            if pdb_id == "1oap":
-                index_shift = pdb_entry - 3
+                if _pdbid == "1oap":
+                    index_shift = pdb_entry - 3
+                else:
+                    index_shift = pdb_entry - 1
             else:
-                index_shift = pdb_entry - 1
+                index_shift = 0
+
             df_z["i"] = df_z["i"] + index_shift
             df_z["j"] = df_z["j"] + index_shift
 
