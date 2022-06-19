@@ -24,19 +24,17 @@ def gap_filter(msa_input, gap_threshold=0.25):
     print('================================================================')
     print('Use gapFilter.py -h or --help for usage.')
     print('Gap threshold is {}%.'.format(gap_threshold * 100))
-    q = msa_input.split("\\")
-    if len(q) > 1:
-        msaDir = os.path.dirname(msa_input) + "\\"
-        msa_input = os.path.basename(msa_input)
-        print(f"CHECK OK. DIR:{msaDir}\tPFAM:{msa_input}")
-    else:
-        msaDir = ""  # change this to your directory
+    msaDir = os.path.dirname(msa_input)
+    msa = os.path.basename(msa_input)
+    msaname = msa.split(".")[0]
+    print(f"CHECK OK. DIR:{msaDir}\tPFAM:{msa}")
 
-    alignment = AlignIO.read('{}{}'.format(msaDir, msa_input), 'fasta')
+    msafullpath = os.path.join(msaDir, msa)
+    alignment = AlignIO.read(msa_input, 'fasta')
     total_sequences = len(alignment)
 
-    output_handle = open("{}{}_filtered_{}.fasta".format(msaDir, msa_input.strip(".txt"),
-                                                         int(gap_threshold * 100)), 'w', encoding='utf-8')
+    outfilepath = os.path.join(msaDir, f"{msaname}_filtered_{int(gap_threshold * 100)}.fasta")
+    output_handle = open(outfilepath, 'w', encoding='utf-8')
     # removed_output = open('removed_seqid' + '_filtered_%dp.txt' % (gap_threshold * 100), 'w')
     print('Number of sequences in MSA: %d\n' % total_sequences)
 
