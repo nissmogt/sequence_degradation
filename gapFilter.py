@@ -4,7 +4,7 @@ import numpy as np
 import csv
 
 
-def gap_filter(msa_input, gap_threshold=0.25):
+def gap_filter(msa_input, gap_threshold=0.25, external_dir=False):
     """
     First removes insertions (.) and lowercase letters, if there are any.
     Then counts the number of gaps in each sequence and from this,
@@ -33,7 +33,10 @@ def gap_filter(msa_input, gap_threshold=0.25):
     alignment = AlignIO.read(msa_input, 'fasta')
     total_sequences = len(alignment)
 
-    outfilepath = os.path.join(msaDir, f"{msaname}_filtered_{int(gap_threshold * 100)}.fasta")
+    if external_dir:
+        outfilepath = os.path.join(external_dir, f"{msaname}_filtered_{int(gap_threshold * 100)}.fasta")
+    else:
+        outfilepath = os.path.join(msaDir, f"{msaname}_filtered_{int(gap_threshold * 100)}.fasta")
     output_handle = open(outfilepath, 'w', encoding='utf-8')
     # removed_output = open('removed_seqid' + '_filtered_%dp.txt' % (gap_threshold * 100), 'w')
     print('Number of sequences in MSA: %d\n' % total_sequences)
