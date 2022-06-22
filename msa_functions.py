@@ -320,26 +320,25 @@ def write_msa(seq_entry, output_filepath):
         AlignIO.write(Align.MultipleSeqAlignment(seq_entry), output_handle, "fasta")
 
 
-def generate_replicates(fin, n_subalign):
+def generate_replicates(_msa, n_subalign):
     import time
     import os
 
-    q = fin.split("\\")
-    if len(q) > 1:
-        DIR_SUB_OUT = os.path.dirname(fin) + "\\replicates\\"
-        pid = os.path.basename(fin).split("_")[0]
-        print(f"CHECK OK. DIR:{DIR_SUB_OUT}\tFilename:{fin}")
-    else:
-        DIR_SUB_OUT = ""  # change this to your directory
-        pid = fin.split("_")[0]
+    msaDir = os.path.dirname(_msa)
+    msa = os.path.basename(_msa)
+    msaname = msa.split(".")[0]
+    print(f"CHECK OK. DIR:{msaDir}\tPFAM:{msa}")
+    dir_sub_out = os.path.join(msaDir, "replicates")
+    pid = os.path.basename(_msa).split("_")[0]
+    print(f"CHECK OK. DIR:{dir_sub_out}\tFilename:{_msa}")
 
     # Extract pfam id from filename and use to build folder structure
     # DIR_SUB_OUT = f"bootstrap\\{pid}\\subalignments\\"
-    if not os.path.exists(DIR_SUB_OUT):
-        os.makedirs(DIR_SUB_OUT)
+    if not os.path.exists(dir_sub_out):
+        os.makedirs(dir_sub_out)
 
     # Read in msa and insert into a list of decreasing nseq
-    msa = AlignIO.read(open(fin, "r"), "fasta")
+    msa = AlignIO.read(open(_msa, "r"), "fasta")
     records = [record for record in msa]
     seed_list = []
     max_nseq = 60000
@@ -357,8 +356,8 @@ def generate_replicates(fin, n_subalign):
             current_msa = msa_sets[row]
             idx_to_keep = remove_randseq(current_msa, seed_list[i])
             new_msa = [current_msa[ind] for j, ind in enumerate(idx_to_keep)]
-            DIR_SUB_N = f"{DIR_SUB_OUT}sub{i}\\"
-            fasta_out = f"{DIR_SUB_N}{pid}_n{nseq}_sub{i}.fasta"
+            dir_sub_n = os.path.join(dir_sub_out, f"sub{i}")
+            fasta_out = os.path.join(dir_sub_n, f"{pid}_n{nseq}_sub{i}.fasta")
             msa_sets.append(new_msa)
             if nseq < max_nseq:
                 write_msa(msa_sets[row], fasta_out)
@@ -369,12 +368,13 @@ def generate_replicates(fin, n_subalign):
             if nseq < max_nseq:
                 list_of_len.append(nseq)
     assert len(np.unique(seed_list, return_counts=True)[0]) == len(seed_list)
-
-    with open(f"{DIR_SUB_OUT}seed_list.txt", "w") as out_handle:
+    seed_lout = os.path.join(dir_sub_out, "seed_list.txt")
+    with open(seed_lout, "w") as out_handle:
         for k in range(len(seed_list)):
             out_handle.write(f"seed{k}:{seed_list[k]}\n")
 
-    with open(f"{DIR_SUB_OUT}length_list.txt", "w") as out_handle:
+    len_lout = os.path.join(dir_sub_out, "length_list.txt")
+    with open(len_lout, "w") as out_handle:
         for k in range(len(list_of_len[:-1])):
             out_handle.write(f"{list_of_len[k]}\n")
 

@@ -683,7 +683,7 @@ else:
     print(f"{file_raw_msa} does not exist.")
 # 1. Gap filter
 if not os.path.exists(file_filtered_msa):
-    file_filtered_msa, nseq, percent_gaps = gap_filter(file_raw_msa, 0.25)
+    file_filtered_msa, nseq, percent_gaps = gap_filter(file_raw_msa, 0.25, external_dir=DIR_SYS)
 
 # Read in filtered MSA
 # 2. Check filesize
