@@ -93,7 +93,7 @@ def pipeline_pdb(PDB_id, dir_pdb):
 
 
 def pipeline_inference(_pfamid, matlab_input, model_length, pseudocount, theta):
-    output_dir = os.path.join(os.path.dirname(matlab_input), f"mf\\pc{pseudocount:.1f}\\")
+    output_dir = os.path.join(os.path.dirname(matlab_input), "mf", f"pc{pseudocount:.1f}")
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     file_dca_output = os.path.join(output_dir, f"DI_{_pfamid}_n{model_length}.txt")
@@ -101,6 +101,7 @@ def pipeline_inference(_pfamid, matlab_input, model_length, pseudocount, theta):
     if not os.path.exists(file_dca_output):
         eng = matlab.engine.start_matlab()
         eng.addpath(DIR_DCA_CODE, nargout=0)
+        eng.addpath(os.path.join(DIR_DCA_CODE, "functions"))
         eng.addpath(output_dir, nargout=0)
         neffective = eng.dca_h_J_Full_v5(theta, matlab_input, file_dca_output, file_matrix_output, nargout=1)
         eng.quit()
@@ -142,16 +143,20 @@ def run_neff_calculation(_pfamid, len_list, nreplicates, outdir, theta, passthro
 
 
 def run_replicates(pfam_id, len_list, nreplicates, outdir, pseudocount, theta, passthrough=False):
+    """
+    Infer DCA couplings for every downsampled ensemble of replicates
+
+    """
     output = os.path.join(outdir, "neff_array.npy")
     if passthrough:
         # Load neffective array
         return np.load(output)
     else:
-        # Run DCA for every replicate and degraded model
-        n_effective_array = np.zeros((nreplicates, len(len_list)))
+        nmodels = len(len_list)
+        n_effective_array = np.zeros((nreplicates, nmodels))      # initialize the array by number of replicates
         for rep in range(nreplicates):
             msa_rep_dir = os.path.join(outdir, f"sub{rep}")
-            for model in range(len(len_list)):
+            for model in range(nmodels):
                 model_length = len_list[model]
                 if model_length > 0:
                     msa_input = os.path.join(msa_rep_dir, f"{pfam_id}_n{model_length}_sub{rep}.fasta")
