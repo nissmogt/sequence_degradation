@@ -22,7 +22,7 @@ def gap_filter(msa_input, gap_threshold=0.25, external_dir=False):
     from Bio import SeqIO
     from Bio.Seq import Seq
     print('================================================================')
-    print('Use gapFilter.py -h or --help for usage.')
+    print('Use gap_filter.py -h or --help for usage.')
     print('Gap threshold is {}%.'.format(gap_threshold * 100))
     msaDir = os.path.dirname(msa_input)
     msa = os.path.basename(msa_input)
