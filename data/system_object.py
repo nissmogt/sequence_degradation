@@ -58,8 +58,9 @@ class System:
         else:
             # 3. Replicate generation 100 replicates
             list_of_len = msa.msa_functions.generate_replicates(self._filtered_msa, 100, self._dir_replicates)
+        return list_of_len
 
-    def run_replicates(self, len_list, nreplicates, pseudocount, theta, passthrough=False):
+    def run_inference(self, _len_list, _nreplicates, passthrough=False):
         """
         Infer DCA couplings for every downsampled ensemble of replicates
         """
@@ -68,12 +69,12 @@ class System:
             # Load neffective array
             return np.load(output)
         else:
-            nmodels = len(len_list)
-            n_effective_array = np.zeros((nreplicates, nmodels))  # initialize the array by number of replicates
-            for rep in range(nreplicates):
+            nmodels = len(_len_list)
+            n_effective_array = np.zeros((_nreplicates, nmodels))  # initialize the array by number of replicates
+            for rep in range(_nreplicates):
                 msa_rep_dir = os.path.join(self._dir_replicates, f"sub{rep}")
                 for model in range(nmodels):
-                    model_length = len_list[model]
+                    model_length = _len_list[model]
                     if model_length > 0:
                         msa_input = os.path.join(msa_rep_dir, f"{self._sysid}_n{model_length}_sub{rep}.fasta")
                         print(f"PFAM: {self._sysid} REP: {rep} N{model}: {model_length}")
@@ -83,4 +84,5 @@ class System:
 
             # Save Neff to file
             np.save(output, n_effective_array)
+            return n_effective_array
 
