@@ -12,3 +12,4 @@ sys.make_new_dirs(root)
 sys.filter()
 list_len = sys.replicates()
 list_neff = sys.run_inference(list_len, 100, passthrough=False)
+x = list_neff
