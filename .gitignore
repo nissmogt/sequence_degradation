@@ -9,128 +9,253 @@
 /frustration/
 /images/
 
-!/get_residues.py
+/get_residues.py
 
-!/box_sdk.py
+/box_sdk.py
 
-!/distance_functions.py
+/distance_functions.py
 
-!/dca.py
+/dca.py
 
-!/paralogmatch.jl
+/paralogmatch.jl
 
-!/output_pipeline.py
+/output_pipeline.py
 
-!/rank_hamming.py
+/rank_hamming.py
 
-!/dimers_DI_scores.npy
+/dimers_DI_scores.npy
 
-!/compare_with_smog_1or7_off_by2.png
+/compare_with_smog_1or7_off_by2.png
 
-!/load_system.py
+/load_system.py
 
-!/dimers_stats - Copy.csv
+/dimers_stats - Copy.csv
 
-!/universal_reference_distribution.py
+/universal_reference_distribution.py
 
-!/pdb_residue_data.sql
+/pdb_residue_data.sql
 
-!/distribution.py
+/distribution.py
 
-!/vectorize_pdb_df.py
+/vectorize_pdb_df.py
 
-!/distance_pdb.py
+/distance_pdb.py
 
-!/dca_interface.py
+/dca_interface.py
 
-!/map_dca.py
+/map_dca.py
 
-!/1or7_seq_align.txt
+/1or7_seq_align.txt
 
-!/bootstrapping.py
+/bootstrapping.py
 
-!/pdb_residue_data.sql.gz
+/pdb_residue_data.sql.gz
 
-!/mapping_functions.py
+/mapping_functions.py
 
-!/zscore.py
+/zscore.py
 
-!/parse_pdb.py
+/parse_pdb.py
 
-!/paper.mplstyle
+/paper.mplstyle
 
-!/monomer_DI_APC_scores.npy
+/monomer_DI_APC_scores.npy
 
-!/testid_test.fasta
+/testid_test.fasta
 
-!/number_of_accept_pairs.py
+/number_of_accept_pairs.py
 
-!/get_region.py
+/get_region.py
 
-!/map_reference.txt
+/map_reference.txt
 
-!/zref.npy
+/zref.npy
 
-!/draw_contacts.py
+/draw_contacts.py
 
-!/map_v2.py
+/map_v2.py
 
-!/dca_functions.py
+/dca_functions.py
 
-!/pairdist_msa.py
+/pairdist_msa.py
 
-!/plot_contact_map.py
+/plot_contact_map.py
 
-!/test_ppv.py
+/test_ppv.py
 
-!/import_distance_matrix.py
+/import_distance_matrix.py
 
-!/bpti_bovin.txt
+/bpti_bovin.txt
 
-!/read_db.py
+/read_db.py
 
-!/PijPLM_PC-0.20.mat
+/PijPLM_PC-0.20.mat
 
-!/box_test.ipynb
+/box_test.ipynb
 
-!/5pti_align.txt
+/5pti_align.txt
 
-!/gaussian.py
+/gaussian.py
 
-!/CreatePijDCAForPLM_PC_v4.m
+/CreatePijDCAForPLM_PC_v4.m
 
-!/smog.contacts
+/smog.contacts
 
-!/pdb_pfam_mapping.txt
+/pdb_pfam_mapping.txt
 
-!/dimers_stats.csv
+/dimers_stats.csv
 
-!/resonance.py
+/resonance.py
 
-!/monomer_DI_scores.npy
+/monomer_DI_scores.npy
 
-!/pdb_index_converter.py
+/pdb_index_converter.py
 
-!/plot_cm_mfdca.py
+/plot_cm_mfdca.py
 
-!/network.py
+/network.py
 
-!/actin_bootstrap.py
+/actin_bootstrap.py
 
-!/smog.contacts.CG
+/smog.contacts.CG
 
-!/2zwh_scan.txt
+/2zwh_scan.txt
 
-!/monomer_DIAPC_scores.npy
+/monomer_DIAPC_scores.npy
 
-!/dimers_FN_APC_scores.npy
+/dimers_FN_APC_scores.npy
 
-!/analyze_structures.py
+/analyze_structures.py
 
-!/pdbmap.txt
+/pdbmap.txt
 
-!/rcsb_pdb_1OR7.fasta
+/rcsb_pdb_1OR7.fasta
 
-!/mapped_reference.txt
+/mapped_reference.txt
 
-!/dimers_DIAPC_scores.npy
+/dimers_DIAPC_scores.npy
+/get_residues.py
+
+/box_sdk.py
+
+/distance_functions.py
+
+/dca.py
+
+/paralogmatch.jl
+
+/output_pipeline.py
+
+/rank_hamming.py
+
+/dimers_DI_scores.npy
+
+/compare_with_smog_1or7_off_by2.png
+
+/load_system.py
+
+/dimers_stats - Copy.csv
+
+/universal_reference_distribution.py
+
+/pdb_residue_data.sql
+
+/distribution.py
+
+/vectorize_pdb_df.py
+
+/distance_pdb.py
+
+/dca_interface.py
+
+/map_dca.py
+
+/1or7_seq_align.txt
+
+/bootstrapping.py
+
+/pdb_residue_data.sql.gz
+
+/mapping_functions.py
+
+/zscore.py
+
+/parse_pdb.py
+
+/paper.mplstyle
+
+/monomer_DI_APC_scores.npy
+
+/testid_test.fasta
+
+/number_of_accept_pairs.py
+
+/get_region.py
+
+/map_reference.txt
+
+/zref.npy
+
+/draw_contacts.py
+
+/map_v2.py
+
+/dca_functions.py
+
+/pairdist_msa.py
+
+/plot_contact_map.py
+
+/test_ppv.py
+
+/import_distance_matrix.py
+
+/bpti_bovin.txt
+
+/read_db.py
+
+/PijPLM_PC-0.20.mat
+
+/box_test.ipynb
+
+/5pti_align.txt
+
+/gaussian.py
+
+/CreatePijDCAForPLM_PC_v4.m
+
+/smog.contacts
+
+/pdb_pfam_mapping.txt
+
+/dimers_stats.csv
+
+/resonance.py
+
+/monomer_DI_scores.npy
+
+/pdb_index_converter.py
+
+/plot_cm_mfdca.py
+
+/network.py
+
+/actin_bootstrap.py
+
+/smog.contacts.CG
+
+/2zwh_scan.txt
+
+/monomer_DIAPC_scores.npy
+
+/dimers_FN_APC_scores.npy
+
+/analyze_structures.py
+
+/pdbmap.txt
+
+/rcsb_pdb_1OR7.fasta
+
+/mapped_reference.txt
+
+/dimers_DIAPC_scores.npy
