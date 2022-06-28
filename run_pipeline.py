@@ -4,6 +4,7 @@ import data.system_object
 
 sysid = sys.argv[1].strip(".fa")
 root = os.getcwd()
+matlab_dir = os.path.join(root, "mf_plm_reweight")
 print(f"System ID: {sysid}\nRoot folder: {root}")
 
 s = data.system_object.System()
