@@ -19,12 +19,12 @@ class System:
         self._filtered_msa = ""
         self._nseq = 0
 
-    def make_new_dirs(self, _root):
+    def make_new_dirs(self, _root, _out):
         # DIRECTORY STRUCTURE INITIALIZATION
-        self._dir_sys = os.path.join(_root, "systems", self._sysid)
-        self._dir_results = os.path.join(self._dir_sys, "results")
+        self._dir_sys = os.path.join(_out, "systems", self._sysid)
+        self._dir_results = os.path.join(_out, "results")
         self._dir_avg_results = os.path.join(self._dir_results, "average_ppv")
-        self._dir_replicates = os.path.join(self._dir_sys, "replicates")
+        self._dir_replicates = os.path.join(_out, "replicates")
 
         # MAKE DIRECTORY IF DOESNT EXIST
         list_dir = [self._dir_sys, self._dir_results, self._dir_avg_results, self._dir_replicates]
@@ -60,7 +60,7 @@ class System:
             list_of_len = msa.msa_functions.generate_replicates(self._filtered_msa, 100, self._dir_replicates)
         return list_of_len
 
-    def run_inference(self, _len_list, _nreplicates, passthrough=False):
+    def run_inference(self, _len_list, _nreplicates, _dir_dca, passthrough=False):
         """
         Infer DCA couplings for every downsampled ensemble of replicates
         """
@@ -79,8 +79,8 @@ class System:
                         msa_input = os.path.join(msa_rep_dir, f"{self._sysid}_n{model_length}_sub{rep}.fasta")
                         print(f"PFAM: {self._sysid} REP: {rep} N{model}: {model_length}")
                         print(f"{msa_input}")
-                        n_effective_array[rep][model] = dca.pipeline_inference.inference(self._sysid, msa_input,
-                                                                                         model_length)
+                        n_effective_array[rep][model] = dca.pipeline_inference.inference(self._sysid, _dir_dca, 
+                                                                                         msa_input, model_length)
 
             # Save Neff to file
             np.save(output, n_effective_array)
