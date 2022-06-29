@@ -3,16 +3,20 @@
 #SBATCH --partition=ctbp-onuchic
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
-#SBATCH --mem-per-cpu=8G
+#SBATCH --cpus-per-task=4
+#SBATCH --mem-per-cpu=1G
 #SBATCH --mail-type=fail
 #SBATCH --mail-user=kmm5@rice.edu
 #SBATCH --profile=ALL
-#SBATCH --time=24:00:00
-#SBATCH --array=0-1
+#SBATCH --time=00:01:00
+#SBATCH --array=0
 
 import os
 import subprocess
+# Activate conda environment
+#subprocess.call(["source $(conda info --base)/etc/profile.d/conda.sh \
+#                  conda activate bio"], shell=True)
+
 msa_files = os.listdir("aln")
 nfiles = len(msa_files)
 hash_table = dict(zip(range(nfiles), msa_files))
@@ -21,8 +25,8 @@ msa = (hash_table.get(x)).strip(".fa")
 print(f"{msa}")
 cmd=f'sbatch --job-name={msa} \
              --time=24:00:00 \
-             -o {msa}_{x}.out \
-	     -e e_{msa}.err \
+             -o logs/{msa}_{x}.out \
+	     -e logs/{msa}_{x}.err \
       	     --account=ctbp-onuchic \
 	     --partition=ctbp-onuchic \
 	     --nodes=1 \
@@ -33,5 +37,4 @@ cmd=f'sbatch --job-name={msa} \
 	     --mail-user=kmm5@rice.edu \
       	     --profile=ALL \
       	     --wrap="python run_pipeline.py {msa}"'
-
 subprocess.call([cmd], shell=True)
