@@ -6,7 +6,7 @@ sysid = sys.argv[1].strip(".fa")
 root = os.getcwd()
 out = "/scratch/kmm5/"
 matlab_dir = os.path.join(root, "mf_plm_reweight")
-print(f"System ID: {sysid}\nRoot folder: {root}")
+print(f"System ID: {sysid}\nRoot folder: {root}\noutput folder: {out}")
 
 s = data.system_object.System()
 s._sysid = sysid
