@@ -259,3 +259,9 @@
 /mapped_reference.txt
 
 /dimers_DIAPC_scores.npy
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+**/.MATLABDriveTag
+**/__pycache__
