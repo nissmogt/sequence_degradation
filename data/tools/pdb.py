@@ -226,14 +226,14 @@ def distance_matrix(pdb_in, heavy_atom=False):
         df_pdb = pd.DataFrame({'i': resi_list, 'j': resj_list, 'd': distance_list,
                                'si': actual_i_list, 'sj': actual_j_list, 'chain_1': chain_1_list,
                                'chain_2': chain_2_list, 'resnames': residue_list, 'atom_id': atom_id_list})
-        filename = os.path.join(pdb_dir, f"atom_distance_matrix_{pdb.split('.pdb')[0]}.txt")
+        filename = os.path.join(pdb_dir, "matrix", f"atom_distance_matrix_{pdb.split('.pdb')[0]}.txt")
         header = "i\tj\tdist_aa\tsi\tsj\tchain_1\tchain_2\tresnames\tatom_id"
         df_pdb.to_csv(filename, sep='\t', index=False, header=header, float_format='%.5f')
     else:
         df_pdb = pd.DataFrame({'i': resi_list, 'j': resj_list, 'd': distance_list,
                                'si': actual_i_list, 'sj': actual_j_list,
                                'chain_1': chain_1_list, 'chain_2': chain_2_list, 'resnames': residue_list})
-        filename = os.path.join(pdb_dir, f"ca_distance_matrix_{pdb.split('.pdb')[0]}.txt")
+        filename = os.path.join(pdb_dir, "matrix", f"ca_distance_matrix_{pdb.split('.pdb')[0]}.txt")
         header = "i\tj\tdist_ca\tsi\tsj\tchain_1\tchain_2\tresnames"
         df_pdb.to_csv(filename, sep='\t', index=False, header=header, float_format='%.5f')
 
@@ -245,9 +245,10 @@ def pipeline_pdb(pdb_id, dir_pdb):
     # PDB distance matrix
     # PDB_id = "5pti"
     # PDB_id = "1or7"
-    dmatrix_file = os.path.join(dir_pdb, f"atom_distance_matrix_{pdb_id}.txt")
-    if os.path.exists(dmatrix_file):
-        pdb_dataframe = pd.read_csv(dmatrix_file, header=0, delimiter="\t")
+    matrix_file = os.path.join(dir_pdb, "matrix", f"atom_distance_matrix_{pdb_id}.txt")
+    if os.path.exists(matrix_file):
+        print("Path exists! Reading from file instead...")
+        pdb_dataframe = pd.read_csv(matrix_file, header=0, delimiter="\t")
     else:
         # uncomment if not reading
         pdb_path = os.path.join(dir_pdb, f"{pdb_id}.pdb")
