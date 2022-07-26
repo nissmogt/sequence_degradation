@@ -2,6 +2,8 @@ import os
 import numpy as np
 import data.tools.pdb as dpdb
 import analysis.dca_object as dca
+import analysis.plots
+from analysis.validation import calculate_ppv
 
 # sysid = sys.argv[1].strip(".fa")
 sysid = "1a3aA"
@@ -27,3 +29,6 @@ zscore_reference = np.load(os.path.join(root, "assets", f"monomer_DIAPC_scores.n
 df_z = d.zscore(df_rank, zscore_reference)
 
 # d.savetocsv(df_z, out_dca)
+analysis.plots.contact_map_single(df_z, monomer=df_pdb, n=10, x="test", distance_cutoff=8)
+# TODO: Plot ppv vs zscore for every neff/l value
+ppv = calculate_ppv(df_z, 6)
