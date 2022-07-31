@@ -71,3 +71,4 @@ widgetsnbextension==3.5.1
 zipp @ file:///tmp/build/80754af9/zipp_1625570634446/work
 
 numpy~=1.21.5
+matplotlib~=3.5.1
