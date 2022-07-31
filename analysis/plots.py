@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
+import os
 import numpy as np
 
 
 def contact_map_single(couplings=None, monomer=None, n=10, x="text", distance_cutoff=6, symmetric=True):
-
     if len(couplings.columns) == 0 and len(monomer.columns) == 0:
         raise ValueError("Need to specify at least one of couplings or monomer")
     plt.style.use('./styles/contact_map_single.mplstyle')
@@ -15,3 +15,81 @@ def contact_map_single(couplings=None, monomer=None, n=10, x="text", distance_cu
     plt.xlabel("resi")
     plt.ylabel("resj")
     plt.show()
+
+
+def figure_1(dca_dataframe, dca_filtered, pdb_dataframe, pdbid, distance_cutoff, average_neff, zcut,
+             Lseq, index_shift, dir_fig):
+    xy_lim = np.abs(Lseq + index_shift)
+    top_2n = 2 * Lseq
+    plt.figure(figsize=(6, 6))
+    plt.scatter('i', 'j', data=pdb_dataframe[pdb_dataframe["d"] <= distance_cutoff],
+                color='lightgrey', s=85, label=f"{pdbid} {distance_cutoff}$\AA$")
+    plt.scatter('j', 'i', data=pdb_dataframe[pdb_dataframe["d"] <= distance_cutoff],
+                color='lightgrey', s=85, label=None)
+    plt.scatter('i', 'j', data=dca_dataframe[:top_2n], label=f"top {top_2n} dca",
+                linewidths=1.8, color="red", marker="x", s=25)
+    plt.scatter('j', 'i', data=dca_filtered, label=f"$z>=${zcut}", color="blue",
+                linewidths=1.8, marker="x", s=25)
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.20), ncol=4, fancybox=True)
+    plt.xlabel("residue i")
+    plt.ylabel("residue j")
+    plt.xlim(0, Lseq)
+    plt.ylim(0, Lseq)
+    plt.title(f"<Neff>={average_neff}, <Neff>/L={average_neff / Lseq:.2f}")
+    imgfile = os.path.join(dir_fig, f"z{zcut}_top{top_2n}_{average_neff}.png")
+    plt.savefig(imgfile, format="png", dpi=200, bbox_inches='tight')
+    plt.close()
+
+
+def plot_score_distribution(dca_score, n_seqs, dca_dataframe, n_effective, n_res, img_dir):
+    plt.figure(n_seqs, figsize=(5, 5))
+    heights, bins, patches = plt.hist(dca_dataframe[dca_score], bins=50)
+    plt.semilogy()
+    plt.title(f"Neff={n_effective}, Neff/L={n_effective / n_res:.2f}")
+    plt.xlim(-10, 21)
+    plt.xticks(np.arange(-10, 24, 3))
+    mean = dca_dataframe[dca_score].mean()
+    std = dca_dataframe[dca_score].std()
+    plt.vlines(mean, 0, 1000, color="black", linestyles="dashed", label=f"mean={mean:.3f}, std={std:.3f}")
+    plt.xlabel("Z-score")
+    plt.ylabel("Counts")
+    plt.legend(loc="upper right")
+    img_out = os.path.join(img_dir, f"{dca_score}_neff{n_effective}.png")
+    plt.savefig(img_out, format="png", dpi=200)
+    plt.close()
+
+
+def plot_dist_distribution(dca_dataframe, n_effective, n_res, img_dir):
+    plt.figure(8927384929, figsize=(5, 5))
+    heights, bins, patches = plt.hist(dca_dataframe["d"], bins=50, color="red", edgecolor="black")
+    plt.ylim(0, 20)
+    plt.title(f"Neff={n_effective}, Neff/L={n_effective / n_res:.2f}")
+    plt.xlabel("Intra-chain distance $\AA$")
+    plt.ylabel("Counts")
+    plt.legend(loc="best")
+    img_out = os.path.join(img_dir, f"distance_neff{n_effective}.png")
+    plt.savefig(img_out, format="png", dpi=200)
+    plt.close()
+
+
+def plot_ppv(zfilter, ppv_list, neff_value, pfamid, sequence_len, threshold_val, img_dir):
+    final_img_dir = img_dir + "\\ppv\\"
+    if not os.path.exists(final_img_dir):
+        os.makedirs(final_img_dir)
+    plt.figure(figsize=(5, 5))
+    plt.plot(ppv_list)
+    plt.scatter(range(len(ppv_list)), ppv_list, edgecolors="black", label=f"{threshold_val:.1f}")
+    plt.ylim(0, 1.1)
+    plt.xlabel("ranked index")
+    plt.ylabel("PPV")
+    plt.title(f"{pfamid}, Neff:{neff_value}, Neff/L={neff_value / sequence_len:.2f}")
+    plt.grid(which="both", alpha=0.3)
+    plt.legend(loc="best")
+
+    if zfilter:
+        img_out = os.path.join(final_img_dir, f"ppv_neff{neff_value}_z{threshold_val:.1f}.png")
+        plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
+    else:
+        img_out = os.path.join(final_img_dir, f"ppv_neff{neff_value}_top{threshold_val:.1f}.png")
+        plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
+    plt.close()
