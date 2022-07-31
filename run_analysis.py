@@ -1,11 +1,14 @@
 import os
+import sys
 import numpy as np
 from analysis.analysis_pipeline import pipeline_replicates
 from msa.tools.check_length import check_length
 
-# sysid = sys.argv[1].strip(".fa")
-sysid = "1a3aA"
+sysid = sys.argv[1].strip(".fa")
 root = os.getcwd()
+print(f"System ID: {sysid}\nRoot folder: {root}\noutput folder: {out}")
+
+# sysid = "1a3aA"
 msa = os.path.join("systems", sysid, f"{sysid}_filtered_25.fasta")
 seq_l = check_length(msa)
 zbool = True
