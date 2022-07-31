@@ -6,7 +6,7 @@ from msa.tools.check_length import check_length
 
 sysid = sys.argv[1].strip(".fa")
 root = os.getcwd()
-print(f"System ID: {sysid}\nRoot folder: {root}\noutput folder: {out}")
+print(f"System ID: {sysid}\nRoot folder: {root}\n")
 
 # sysid = "1a3aA"
 msa = os.path.join("systems", sysid, f"{sysid}_filtered_25.fasta")
