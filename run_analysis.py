@@ -1,13 +1,14 @@
+#!/home/kmm5/.conda/envs/bio/bin/python3.8
 import os
 import sys
 import numpy as np
 from analysis.analysis_pipeline import pipeline_replicates
 from msa.tools.check_length import check_length
 
-sysid = sys.argv[1].strip(".fa")
-print(f"System ID: {sysid}\n")
+#sysid = sys.argv[1].strip(".fa")
+sysid = "1a3aA"
 dca_dir = os.path.join("/scratch", "kmm5")
-# sysid = "1a3aA"
+print(f"System ID: {sysid}\nPath: {dca_dir}")
 msa = os.path.join(dca_dir, "systems", sysid, f"{sysid}_filtered_25.fasta")
 seq_l = check_length(msa)
 zbool = True

@@ -9,7 +9,7 @@
 #SBATCH --mail-user=kmm5@rice.edu
 #SBATCH --profile=ALL
 #SBATCH --time=00:01:00
-#SBATCH --array=0-147
+#SBATCH --array=0-149
 
 import os
 import subprocess
