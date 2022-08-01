@@ -79,7 +79,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
             output_norm = os.path.join(dir_results, "average_ppv",
                                        f"ppv_norm_top{thresholds_list[-1]}_{dca_score}_reps100.npy")
 
-    df_pdb = dpdb.pipeline_pdb(_sysid, )
+    df_pdb = dpdb.pipeline_pdb(_sysid, dir_pdb)
     # IF ALREADY CALCULATED LOAD PPV FILE
     if passthrough:
         return np.load(output_ppv), np.load(output_norm)
