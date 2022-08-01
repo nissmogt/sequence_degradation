@@ -25,7 +25,7 @@ def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False):
     df_dca = df_rank.merge(_df_pdb, how='inner', on=['i', 'j'])
 
     if zcalc:
-        zscore_reference = np.load(os.path.join(root, "../assets", f"monomer_DIAPC_scores.npy"))
+        zscore_reference = np.load(os.path.join("assets", f"monomer_DIAPC_scores.npy"))
         df_z = d.zscore(df_dca, zscore_reference)
         df_z.to_csv(outfile, sep='\t', index=False, header=df_header, float_format='%.4f')
 
