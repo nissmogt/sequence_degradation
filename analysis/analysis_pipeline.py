@@ -95,6 +95,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
             pos_pred_list = np.zeros((len(thresholds_list), n_replicates, n_sys))
             num_pairs_left = np.zeros_like(pos_pred_list)
         for rep_id in range(20):
+            # TODO: CHANGE BACK TO 100
             # Make directories for results and plots
             dir_dca_results = os.path.join(dir_replicates, f"sub{rep_id}", "mf", "pc0.2")
             dir_contact_map = os.path.join(dir_dca_results, "images")
@@ -149,7 +150,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                             # num_pairs_left[k][rep_id][model_id] = tpfp[-1]
                     else:
                         pos_pred_list[k][rep_id][model_id] = 0
-        # np.save(output_ppv, pos_pred_list)
+        np.save(output_ppv, pos_pred_list)
         # np.save(output_norm, num_pairs_left)
         # return pos_pred_list, num_pairs_left
         return pos_pred_list
