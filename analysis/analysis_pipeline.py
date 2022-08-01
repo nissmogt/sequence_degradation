@@ -6,19 +6,19 @@ import analysis.plots
 from analysis.validation import calculate_ppv
 
 
-def process_dca(_sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False):
+def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False):
     df_header = ["i", "j", "di", "zscore", "diapc", "mi", "d", "si", "sj", "chain_1", "chain_2", "resnames", "atom_id"]
     raw_dca = f"DI_{_sysid}_n{_nseqs}.txt"
-    dir_dca = os.path.join(root, "../systems", sysid, "replicates", f"sub{_rep}", "mf", "pc0.2")
+    dir_dca = os.path.join(root, "systems", _sysid, "replicates", f"sub{_rep}", "mf", "pc0.2")
     dca_in = os.path.join(dir_dca, raw_dca)
     outfile = os.path.join(dir_dca, f"{_sysid}_neff{_neff}_pc0.2_all.txt")
 
     d = dca.DirectCoupling()
-    d._sysid = sysid
+    d._sysid = _sysid
     d._score = "diapc"
-    neff_array = np.load(os.path.join(root, "../systems", sysid, "replicates", "neff_array.npy"))
+    neff_array = np.load(os.path.join(root, "systems", _sysid, "replicates", "neff_array.npy"))
     n_effective = neff_array[0][0]
-    out_dca = os.path.join(dir_dca, f"{sysid}_neff{n_effective}_all.txt")
+    out_dca = os.path.join(dir_dca, f"{_sysid}_neff{n_effective}_all.txt")
 
     df = d.load_raw(dca_in)
     df_rank = d.rank_hamming(df, distance=5)
@@ -107,7 +107,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
 
                 neff = int(neffective_array[rep_id][model_id])
                 # OUTPUT ZSCORE
-                df_dca = process_dca(_sysid, df_pdb, model_lengths[model_id], neff, rep_id, zcalc=True)
+                df_dca = process_dca(_dca_dir, _sysid, df_pdb, model_lengths[model_id], neff, rep_id, zcalc=True)
                 map_idx = 0
                 # draw_publish_dca(_pfamid, df_dca, "A", dir_contact_map)
                 # matrix = into_matrix(df_dca)
