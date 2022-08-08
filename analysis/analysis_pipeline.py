@@ -135,7 +135,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                         df_filtered = df_dca[:threshold_value]
 
                     if len(df_filtered) > 0:
-                        ppv = calculate_ppv(df_filtered, distance_cutoff)
+                        ppv, tpfp = calculate_ppv(df_filtered, distance_cutoff)
                         # ppv = np.zeros(10)
                         # tpfp = np.zeros(10)
                         if plots:
@@ -143,13 +143,13 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                             print("PPV")
                         if npairs > 0:  # to use in plotting ranked pairs
                             pos_pred_list[k][rep_id][model_id] = ppv
-                            # num_pairs_left[k][rep_id][model_id] = tpfp
+                            num_pairs_left[k][rep_id][model_id] = tpfp
                         else:
                             pos_pred_list[k][rep_id][model_id] = ppv[-1]
-                            # num_pairs_left[k][rep_id][model_id] = tpfp[-1]
+                            num_pairs_left[k][rep_id][model_id] = tpfp[-1]
                     else:
                         pos_pred_list[k][rep_id][model_id] = 0
         np.save(output_ppv, pos_pred_list)
-        # np.save(output_norm, num_pairs_left)
+        np.save(output_norm, num_pairs_left)
         # return pos_pred_list, num_pairs_left
-        return pos_pred_list
+        return pos_pred_list, num_pairs_left

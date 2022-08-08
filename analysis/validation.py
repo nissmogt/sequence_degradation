@@ -19,4 +19,4 @@ def calculate_ppv(dataframe_in, threshold):
             fp_count[j] = fcount
         positive_predictive_value[j] = tp_count[j] / (fp_count[j] + tp_count[j])
 
-    return positive_predictive_value
+    return positive_predictive_value, tp_count + fp_count
