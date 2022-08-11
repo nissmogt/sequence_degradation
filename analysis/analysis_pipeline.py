@@ -68,7 +68,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
     pdbid = _sysid
     if zfilter:
         output_ppv = os.path.join(dir_results, "average_ppv", f"{pdbid}_ppv_zscore_{dca_score}_100reps.npy")
-        output_norm = os.path.join(dir_results, "average_ppv", f"ppv_norm_z_{dca_score}_reps100.npy")
+        output_norm = os.path.join(dir_results, "average_ppv", f"{pdbid}_ppv_norm_z_{dca_score}_reps100.npy")
     else:
         if npairs > 0:
             output_ppv = os.path.join(dir_results, "average_ppv",
@@ -77,7 +77,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
             output_ppv = os.path.join(dir_results, "average_ppv",
                                       f"{pdbid}_ppv_top{thresholds_list[-1]}_{dca_score}_100reps.npy")
             output_norm = os.path.join(dir_results, "average_ppv",
-                                       f"ppv_norm_top{thresholds_list[-1]}_{dca_score}_reps100.npy")
+                                       f"{pdbid}_ppv_norm_top{thresholds_list[-1]}_{dca_score}_reps100.npy")
 
     df_pdb = dpdb.pipeline_pdb(_sysid, dir_pdb)
     # IF ALREADY CALCULATED LOAD PPV FILE
