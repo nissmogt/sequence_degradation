@@ -46,5 +46,11 @@ class DirectCoupling:
         df_ranked = df_sorted[abs(df_sorted['i'] - df_sorted['j']) >= distance].reset_index(drop=True)
         return df_ranked
 
+    def add_pdb_distances(self, dca_dataframe, pdb_dataframe):
+        """
+        Uses pandas merge to get the intersection between dca and pdb pairs
+        """
+        return dca_dataframe.merge(pdb_dataframe, how='inner', on=['i', 'j'])
+
     def zscore(self, dca_dataframe, reference):
         return analysis.zscore.zscore_calculation(dca_dataframe, self._score, reference)
