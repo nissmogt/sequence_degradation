@@ -11,7 +11,6 @@ def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False):
     Processes DCA output and returns a dataframe.
 
     """
-    df_header = ["i", "j", "di", "zscore", "diapc", "mi", "d", "si", "sj", "chain_1", "chain_2", "resnames", "atom_id"]
     # File name definitions and directory creation
     raw_dca = f"DI_{_sysid}_n{_nseqs}.txt"
     dir_dca = os.path.join(root, "systems", _sysid, "replicates", f"sub{_rep}", "mf", "pc0.2")
@@ -31,6 +30,8 @@ def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False):
     df_dca = d.add_pdb_distances(df_rank, _df_pdb)
 
     if zcalc:
+        df_header = ["i", "j", "di", "zscore", "diapc", "mi", "d", "si", "sj", "chain_1", "chain_2", "resnames",
+                     "atom_id"]
         zscore_reference = np.load(os.path.join("assets", f"monomer_DIAPC_scores.npy"))
         df_z = d.zscore(df_dca, zscore_reference)
         df_z.to_csv(outfile, sep='\t', index=False, header=df_header, float_format='%.4f')
@@ -72,18 +73,18 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
     # CONTROL PPV OUTFILE NAME DEPENDING ON ZFILTER VALUE
     dca_score = "DIAPC"
     pdbid = _sysid
+    dir_ppv = os.path.join(dir_results, "average_ppv")
+    if not os.path.exists(dir_ppv):
+        os.makedirs(dir_ppv)
     if zfilter:
-        output_ppv = os.path.join(dir_results, "average_ppv", f"{pdbid}_ppv_zscore_{dca_score}_100reps.npy")
-        output_norm = os.path.join(dir_results, "average_ppv", f"{pdbid}_ppv_norm_z_{dca_score}_reps100.npy")
+        output_ppv = os.path.join(dir_ppv, f"{pdbid}_ppv_zscore_{dca_score}_100reps.npy")
+        output_norm = os.path.join(dir_ppv, f"{pdbid}_ppv_norm_z_{dca_score}_reps100.npy")
     else:
         if npairs > 0:
-            output_ppv = os.path.join(dir_results, "average_ppv",
-                                      f"{pdbid}_ppv_top{npairs}_{dca_score}_100reps.npy")
+            output_ppv = os.path.join(dir_ppv, f"{pdbid}_ppv_top{npairs}_{dca_score}_100reps.npy")
         else:
-            output_ppv = os.path.join(dir_results, "average_ppv",
-                                      f"{pdbid}_ppv_top{thresholds_list[-1]}_{dca_score}_100reps.npy")
-            output_norm = os.path.join(dir_results, "average_ppv",
-                                       f"{pdbid}_ppv_norm_top{thresholds_list[-1]}_{dca_score}_reps100.npy")
+            output_ppv = os.path.join(dir_ppv, f"{pdbid}_ppv_top{thresholds_list[-1]}_{dca_score}_100reps.npy")
+            output_norm = os.path.join(dir_ppv, f"{pdbid}_ppv_norm_top{thresholds_list[-1]}_{dca_score}_reps100.npy")
 
     df_pdb = dpdb.pipeline_pdb(_sysid, dir_pdb)
     # IF ALREADY CALCULATED LOAD PPV FILE
