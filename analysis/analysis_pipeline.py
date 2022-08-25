@@ -28,7 +28,7 @@ def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False):
 
     df = d.load_to_df(dca_in)
     df_rank = d.rank_hamming(df, distance=5)
-    df_dca = df_rank.merge(_df_pdb, how='inner', on=['i', 'j'])
+    df_dca = d.add_pdb_distances(df_rank, _df_pdb)
 
     if zcalc:
         zscore_reference = np.load(os.path.join("assets", f"monomer_DIAPC_scores.npy"))
