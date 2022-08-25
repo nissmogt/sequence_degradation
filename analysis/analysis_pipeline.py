@@ -7,20 +7,26 @@ from analysis.validation import calculate_ppv
 
 
 def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False):
+    """
+    Processes DCA output and returns a dataframe.
+
+    """
     df_header = ["i", "j", "di", "zscore", "diapc", "mi", "d", "si", "sj", "chain_1", "chain_2", "resnames", "atom_id"]
+    # File name definitions and directory creation
     raw_dca = f"DI_{_sysid}_n{_nseqs}.txt"
     dir_dca = os.path.join(root, "systems", _sysid, "replicates", f"sub{_rep}", "mf", "pc0.2")
     dca_in = os.path.join(dir_dca, raw_dca)
     outfile = os.path.join(dir_dca, f"{_sysid}_neff{_neff}_pc0.2_all.txt")
 
+    # Instantiate DCA object
     d = dca.DirectCoupling()
-    d._sysid = _sysid
-    d._score = "diapc"
+    d.set_sysid(_sysid)
+    d.set_score("diapc")
     neff_array = np.load(os.path.join(root, "systems", _sysid, "replicates", "neff_array.npy"))
     n_effective = neff_array[0][0]
     out_dca = os.path.join(dir_dca, f"{_sysid}_neff{n_effective}_all.txt")
 
-    df = d.load_raw(dca_in)
+    df = d.load_to_df(dca_in)
     df_rank = d.rank_hamming(df, distance=5)
     df_dca = df_rank.merge(_df_pdb, how='inner', on=['i', 'j'])
 
