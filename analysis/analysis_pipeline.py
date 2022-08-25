@@ -86,13 +86,14 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
             output_ppv = os.path.join(dir_ppv, f"{pdbid}_ppv_top{thresholds_list[-1]}_{dca_score}_100reps.npy")
             output_norm = os.path.join(dir_ppv, f"{pdbid}_ppv_norm_top{thresholds_list[-1]}_{dca_score}_reps100.npy")
 
+    # Calculate pdb distance matrix and output to file
     df_pdb = dpdb.pipeline_pdb(_sysid, dir_pdb)
-    # IF ALREADY CALCULATED LOAD PPV FILE
     if passthrough:
+        # IF ALREADY CALCULATED LOAD PPV FILE
         return np.load(output_ppv), np.load(output_norm)
 
-    # ELSE CALCULATE PPV
     else:
+        # ELSE CALCULATE PPV
         n_replicates, n_sys = neffective_array.shape
 
         if npairs > 0:
@@ -146,8 +147,9 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                         # ppv = np.zeros(10)
                         # tpfp = np.zeros(10)
                         if plots:
-                            # analysis.plots.plot_ppv(zfilter, ppv, neff, _sysid, _ncols, threshold_value, dir_contact_map)
-                            print("PPV")
+                            analysis.plots.plot_ppv(zfilter, ppv, neff, _sysid, _ncols,
+                                                    threshold_value, dir_contact_map)
+                            print("plotting PPV")
                         if npairs > 0:  # to use in plotting ranked pairs
                             pos_pred_list[k][rep_id][model_id] = ppv
                             num_pairs_left[k][rep_id][model_id] = tpfp
