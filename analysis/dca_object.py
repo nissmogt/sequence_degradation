@@ -10,9 +10,19 @@ class DirectCoupling:
         self._score = ""
         self._template_sequence = ""
 
-    def load_raw(self, dca_in):
-        df_header = ["i", "j", "di", "zscore", "diapc", "mi", "d", "si", "sj", "chain_1", "chain_2", "resnames",
-                     "atom_id"]
+    def set_sysid(self, sysid):
+        self._sysid = sysid
+
+    def set_pdbid(self, pdbid):
+        self._pdbid = pdbid
+
+    def set_score(self, score):
+        self._score = score
+
+    def set_template_sequence(self, template):
+        self._template_sequence = template
+
+    def load_to_df(self, dca_in):
         if os.path.exists(dca_in):
             dir_dca_in = os.path.dirname(dca_in)
             return pd.read_csv(dca_in, delimiter=',', header=0)
