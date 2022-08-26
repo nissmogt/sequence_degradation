@@ -55,42 +55,39 @@ def plot_score_distribution(dca_score, n_seqs, dca_dataframe, n_effective, n_res
     plt.ylabel("Counts")
     plt.legend(loc="upper right")
     img_out = os.path.join(img_dir, f"{dca_score}_neff{n_effective}.png")
-    plt.savefig(img_out, format="png", dpi=200)
+    plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
 
 def plot_dist_distribution(dca_dataframe, n_effective, n_res, img_dir):
     plt.figure(8927384929, figsize=(5, 5))
     heights, bins, patches = plt.hist(dca_dataframe["d"], bins=50, color="red", edgecolor="black")
-    # plt.ylim(0, 20)
+    plt.ylim(0, 60)
     plt.title(f"Neff={n_effective}, Neff/L={n_effective / n_res:.2f}")
-    plt.xlabel("Intra-chain distance $\AA$")
-    plt.ylabel("Counts")
+    plt.xlabel("intra-chain distance $\AA$")
+    plt.ylabel("counts")
     plt.legend(loc="best")
     img_out = os.path.join(img_dir, f"distance_neff{n_effective}.png")
-    plt.savefig(img_out, format="png", dpi=200)
+    plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
 
 def plot_ppv(zfilter, ppv_list, neff_value, pfamid, sequence_len, threshold_val, img_dir):
-    final_img_dir = img_dir + "\\ppv\\"
-    if not os.path.exists(final_img_dir):
-        os.makedirs(final_img_dir)
     plt.figure(figsize=(5, 5))
     plt.plot(ppv_list)
-    plt.scatter(range(len(ppv_list)), ppv_list, edgecolors="black", label=f"{threshold_val:.1f}")
-    plt.ylim(0, 1.1)
-    plt.xlabel("ranked index")
+    plt.scatter(range(len(ppv_list)), ppv_list, edgecolors="black", label=f"z={threshold_val:.1f}")
+    plt.ylim(-0.1, 1.1)
+    plt.xlabel("rank")
     plt.ylabel("PPV")
     plt.title(f"{pfamid}, Neff:{neff_value}, Neff/L={neff_value / sequence_len:.2f}")
     plt.grid(which="both", alpha=0.3)
     plt.legend(loc="best")
 
     if zfilter:
-        img_out = os.path.join(final_img_dir, f"ppv_neff{neff_value}_z{threshold_val:.1f}.png")
+        img_out = os.path.join(img_dir, f"ppv_neff{neff_value}_z{threshold_val:.1f}.png")
         plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     else:
-        img_out = os.path.join(final_img_dir, f"ppv_neff{neff_value}_top{threshold_val:.1f}.png")
+        img_out = os.path.join(img_dir, f"ppv_neff{neff_value}_top{threshold_val:.1f}.png")
         plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
@@ -101,11 +98,12 @@ def plot_top_zscore(dca_dataframe, n, n_effective, n_res, img_dir):
     std_z = np.std(topn_dca)
     plt.figure(873499, figsize=(5, 5))
     plt.plot(topn_dca)
-    plt.scatter(range(n), topn_dca)
-    plt.title(f"Neff={n_effective}, Neff/L={n_effective / n_res:.2f}, avg:{avg_z:.2f}, std:{std_z:.2f}")
+    plt.scatter(range(n), topn_dca, edgecolors="black", label=f"avg:{avg_z:.2f}, std:{std_z:.2f}")
+    plt.title(f"Neff={n_effective}, Neff/L={n_effective / n_res:.2f}")
     plt.xlabel("rank")
     plt.ylabel("z-score")
+    plt.ylim(0, 25)
     img_out = os.path.join(img_dir, f"top{n}_avgz_neff{n_effective}.png")
-    plt.savefig(img_out, format="png", dpi=200)
+    plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
