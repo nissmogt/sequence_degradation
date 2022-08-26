@@ -103,6 +103,7 @@ def plot_top_zscore(dca_dataframe, n, n_effective, n_res, img_dir):
     plt.xlabel("rank")
     plt.ylabel("z-score")
     plt.ylim(0, 25)
+    plt.legend(loc="best")
     img_out = os.path.join(img_dir, f"top{n}_avgz_neff{n_effective}.png")
     plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
