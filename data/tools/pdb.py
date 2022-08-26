@@ -222,18 +222,21 @@ def distance_matrix(pdb_in, heavy_atom=False):
     # fileout.close()
     print("\t -- LOOP TIME -- {}".format(time.time() - start_time))
     # makes a pandas dataframe
+    dir_matrix = os.path.join(pdb_dir, "matrix")
+    if not os.path.exists(dir_matrix):
+        os.makedirs(dir_matrix)
     if heavy_atom:
         df_pdb = pd.DataFrame({'i': resi_list, 'j': resj_list, 'd': distance_list,
                                'si': actual_i_list, 'sj': actual_j_list, 'chain_1': chain_1_list,
                                'chain_2': chain_2_list, 'resnames': residue_list, 'atom_id': atom_id_list})
-        filename = os.path.join(pdb_dir, "matrix", f"atom_distance_matrix_{pdb.split('.pdb')[0]}.txt")
+        filename = os.path.join(dir_matrix, f"atom_distance_matrix_{pdb.split('.pdb')[0]}.txt")
         header = "i\tj\tdist_aa\tsi\tsj\tchain_1\tchain_2\tresnames\tatom_id"
         df_pdb.to_csv(filename, sep='\t', index=False, header=header, float_format='%.5f')
     else:
         df_pdb = pd.DataFrame({'i': resi_list, 'j': resj_list, 'd': distance_list,
                                'si': actual_i_list, 'sj': actual_j_list,
                                'chain_1': chain_1_list, 'chain_2': chain_2_list, 'resnames': residue_list})
-        filename = os.path.join(pdb_dir, "matrix", f"ca_distance_matrix_{pdb.split('.pdb')[0]}.txt")
+        filename = os.path.join(dir_matrix, f"ca_distance_matrix_{pdb.split('.pdb')[0]}.txt")
         header = "i\tj\tdist_ca\tsi\tsj\tchain_1\tchain_2\tresnames"
         df_pdb.to_csv(filename, sep='\t', index=False, header=header, float_format='%.5f')
 
