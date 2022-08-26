@@ -138,8 +138,9 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                             print(f"{threshold_value}")
                             # zscore_contact_map(df_filtered, pdbid, neff, ncols + map_idx, df_pdb, distance_cutoff,
                             #                    dir_contact_map, threshold_value, False)
+                            analysis.plots.plot_top_zscore(df_dca, 10, n_degraded_seqs, _ncols, dir_contact_map)
                             analysis.plots.figure_1(df_dca, df_filtered, df_pdb, pdbid, distance_cutoff,
-                                                    n_degraded_seqs, threshold_value, _ncols, map_idx, dir_contact_map)
+                                                n_degraded_seqs, threshold_value, _ncols, map_idx, dir_contact_map)
                     else:
                         df_filtered = df_dca[:threshold_value]
 
@@ -154,10 +155,9 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                             pair_rank_array[k][rep_id][model_id] = pair_rank
                         else:
                             pos_pred_list[k][rep_id][model_id] = ppv[-1]
-                            pair_rank_array[k][rep_id][model_id] = pair_rank[-1]
+                            pair_rank_array[k][rep_id][model_id] = pair_rank
                     else:
                         pos_pred_list[k][rep_id][model_id] = 0
         np.save(output_ppv, pos_pred_list)
         np.save(output_pair_rank, pair_rank_array)
-        # return pos_pred_list, num_pairs_left
         return pos_pred_list, pair_rank_array
