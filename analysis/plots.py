@@ -33,8 +33,8 @@ def figure_1(dca_dataframe, dca_filtered, pdb_dataframe, pdbid, distance_cutoff,
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.20), ncol=4, fancybox=True)
     plt.xlabel("residue i")
     plt.ylabel("residue j")
-    plt.xlim(0, Lseq)
-    plt.ylim(0, Lseq)
+    plt.xlim(0, Lseq + 5)
+    plt.ylim(0, Lseq + 5)
     plt.title(f"<Neff>={average_neff}, <Neff>/L={average_neff / Lseq:.2f}")
     imgfile = os.path.join(dir_fig, f"z{zcut}_top{top_2n}_{average_neff}.png")
     plt.savefig(imgfile, format="png", dpi=200, bbox_inches='tight')
@@ -62,7 +62,7 @@ def plot_score_distribution(dca_score, n_seqs, dca_dataframe, n_effective, n_res
 def plot_dist_distribution(dca_dataframe, n_effective, n_res, img_dir):
     plt.figure(8927384929, figsize=(5, 5))
     heights, bins, patches = plt.hist(dca_dataframe["d"], bins=50, color="red", edgecolor="black")
-    plt.ylim(0, 20)
+    # plt.ylim(0, 20)
     plt.title(f"Neff={n_effective}, Neff/L={n_effective / n_res:.2f}")
     plt.xlabel("Intra-chain distance $\AA$")
     plt.ylabel("Counts")
@@ -93,3 +93,19 @@ def plot_ppv(zfilter, ppv_list, neff_value, pfamid, sequence_len, threshold_val,
         img_out = os.path.join(final_img_dir, f"ppv_neff{neff_value}_top{threshold_val:.1f}.png")
         plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
+
+
+def plot_top_zscore(dca_dataframe, n, n_effective, n_res, img_dir):
+    topn_dca = dca_dataframe["zscore"][:n]
+    avg_z = np.mean(topn_dca)
+    std_z = np.std(topn_dca)
+    plt.figure(873499, figsize=(5, 5))
+    plt.plot(topn_dca)
+    plt.scatter(range(n), topn_dca)
+    plt.title(f"Neff={n_effective}, Neff/L={n_effective / n_res:.2f}, avg:{avg_z:.2f}, std:{std_z:.2f}")
+    plt.xlabel("rank")
+    plt.ylabel("z-score")
+    img_out = os.path.join(img_dir, f"top{n}_avgz_neff{n_effective}.png")
+    plt.savefig(img_out, format="png", dpi=200)
+    plt.close()
+
