@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from msa.tools.check_length import check_length
 
 sysid = []
-with open("sys.txt", "r") as fp:
+with open("sys_10.txt", "r") as fp:
     for line in fp.readlines():
         sysid.append(line.rstrip())
 l= []
