@@ -341,7 +341,7 @@ def generate_replicates(_msa, n_subalign, _dir_sub_out):
     msa = AlignIO.read(open(_msa, "r"), "fasta")
     records = [record for record in msa]
     seed_list = []
-    max_nseq = 60000
+    max_nseq = 100000
     for i in range(n_subalign):
         seed_list.append(time.time_ns())
         row = 0
