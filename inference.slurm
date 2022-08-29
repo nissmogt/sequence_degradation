@@ -5,8 +5,6 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem-per-cpu=1G
-#SBATCH --mail-type=fail
-#SBATCH --mail-user=kmm5@rice.edu
 #SBATCH --profile=ALL
 #SBATCH --time=00:01:00
 #SBATCH --array=0-9
@@ -17,7 +15,8 @@ import subprocess
 #subprocess.call(["source $(conda info --base)/etc/profile.d/conda.sh \
 #                  conda activate bio"], shell=True)
 
-msa_files = os.listdir("done")
+aln_dir = "done"
+msa_files = os.listdir(aln_dir)
 nfiles = len(msa_files)
 hash_table = dict(zip(range(nfiles), msa_files))
 x = int(os.getenv("SLURM_ARRAY_TASK_ID"))
@@ -25,8 +24,8 @@ msa = (hash_table.get(x)).strip(".fa")
 print(f"{msa}")
 cmd=f'sbatch --job-name={msa} \
              --time=24:00:00 \
-             -o logs/{msa}_{x}.out \
-	     -e logs/{msa}_{x}.err \
+             -o logs/dca_{msa}_{x}.out \
+	     -e logs/dca_{msa}_{x}.err \
       	     --account=ctbp-onuchic \
 	     --partition=ctbp-onuchic \
 	     --nodes=1 \
@@ -36,5 +35,5 @@ cmd=f'sbatch --job-name={msa} \
 	     --mail-type=fail \
 	     --mail-user=kmm5@rice.edu \
       	     --profile=ALL \
-      	     --wrap="python run_pipeline.py {msa}"'
+      	     --wrap="python run_inference.py {msa} {aln_dir}"'
 subprocess.call([cmd], shell=True)

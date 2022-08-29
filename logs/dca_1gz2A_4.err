@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "run_inference.py", line 4, in <module>
+    import data.system_object
+  File "/home/kmm5/sequence_degradation/data/system_object.py", line 54
+    if not run:
+              ^
+TabError: inconsistent use of tabs and spaces in indentation
