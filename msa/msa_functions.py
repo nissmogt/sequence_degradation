@@ -328,13 +328,12 @@ def generate_replicates(_msa, n_subalign, _dir_sub_out):
     msa = os.path.basename(_msa)
     msaname = msa.split(".")[0]
     print(f"CHECK OK. DIR:{msaDir}\tPFAM:{msa}")
-    # dir_sub_out = os.path.join(msaDir, "replicates")
     pid = os.path.basename(_msa).split("_")[0]
     print(f"CHECK OK. DIR:{_dir_sub_out}\tFilename:{_msa}")
 
     # Extract pfam id from filename and use to build folder structure
-    # DIR_SUB_OUT = f"bootstrap\\{pid}\\subalignments\\"
     if not os.path.exists(_dir_sub_out):
+        print(f"{_dir_sub_out} not found. Creating directory...")
         os.makedirs(_dir_sub_out)
 
     # Read in msa and insert into a list of decreasing nseq
