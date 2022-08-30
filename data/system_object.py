@@ -37,6 +37,10 @@ class System:
             if not os.path.exists(entry):
                 os.makedirs(entry)
 
+    def check_dir(self):
+        print(f"SYS: {self._dir_sys}, RESULTS: {self._dir_results}, "
+              f"AVG_RES: {self._dir_avg_results}, REPLICATES: {self._dir_replicates}")
+
     def filter(self, run=True):
         """
         Applies 25% gap filter to msa.
