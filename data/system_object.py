@@ -27,9 +27,9 @@ class System:
     def make_new_dirs(self, _root, _out):
         # DIRECTORY STRUCTURE INITIALIZATION
         self._dir_sys = os.path.join(_out, "systems", self._sysid)
-        self._dir_results = os.path.join(_out, "results")
+        self._dir_replicates = os.path.join(self._dir_sys, "replicates")
+        self._dir_results = os.path.join(self._dir_sys, "results")
         self._dir_avg_results = os.path.join(self._dir_results, "average_ppv")
-        self._dir_replicates = os.path.join(_out, "replicates")
 
         # MAKE DIRECTORY IF DOESNT EXIST
         list_dir = [self._dir_sys, self._dir_results, self._dir_avg_results, self._dir_replicates]
