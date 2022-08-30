@@ -8,9 +8,8 @@ import dca.pipeline_inference
 class System:
     def __init__(self):
         self._sysid = ""
-        self._pdbid = ""
         self._dir_aln = ""
-        self._dir_pdb = ""
+
         self._dir_sys = ""
         self._dir_results = ""
         self._dir_replicates = ""
@@ -18,6 +17,12 @@ class System:
         self._raw_msa = ""
         self._filtered_msa = ""
         self._nseq = 0
+
+    def set_sysid(self, sysid):
+        self._sysid = sysid
+
+    def set_align_dir(self, directory):
+        self._dir_aln = directory
 
     def make_new_dirs(self, _root, _out):
         # DIRECTORY STRUCTURE INITIALIZATION
@@ -32,7 +37,7 @@ class System:
             if not os.path.exists(entry):
                 os.makedirs(entry)
 
-    def filter(self):
+    def filter(self, run=True):
         """
         Applies 25% gap filter to msa.
         """
@@ -42,7 +47,7 @@ class System:
             self._filtered_msa = os.path.join(self._dir_sys, f"{self._sysid}_full_filtered_25.fasta")
         else:
             print(f"{self._raw_msa} does not exist.")
-        if not os.path.exists(self._filtered_msa):
+        if run:
             self._filtered_msa, self._nseq, percent_gaps = msa.tools.gap_filter.gap_filter(self._raw_msa,
                                                                                            0.25, self._dir_sys)
 
