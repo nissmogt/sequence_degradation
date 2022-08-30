@@ -8,9 +8,10 @@ def inference(_pfamid, dir_dca, matlab_input, model_length, pseudocount=0.2, run
         os.makedirs(output_dir)
     file_dca_output = os.path.join(output_dir, f"DI_{_pfamid}_n{model_length}.txt")
     file_matrix_output = os.path.join(output_dir, f"matrix_{_pfamid}_n{model_length}.mat")
+    print(f"creating {file_dca_output} and {file_matrix_output}")
     if run:
-        if not os.path.exists(file_dca_output):
-            print(f"{file_dca_output} does not exist!")
+        if not os.path.exists(matlab_input):
+            print(f"{matlab_input} not found!")
         else:
             eng = matlab.engine.start_matlab()
             eng.addpath(dir_dca, nargout=0)
