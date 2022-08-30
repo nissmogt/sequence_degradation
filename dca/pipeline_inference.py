@@ -2,8 +2,8 @@ import os
 import matlab.engine
 
 
-def inference(_pfamid, dir_dca, matlab_input, model_length, pseudocount=0.2, run=True):
-    output_dir = os.path.join(os.path.dirname(matlab_input), "mf", f"pc{pseudocount:.1f}")
+def inference(_pfamid, dir_dca, matlab_input, model_length, run=True):
+    output_dir = os.path.dirname(matlab_input)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     file_dca_output = os.path.join(output_dir, f"DI_{_pfamid}_n{model_length}.txt")
