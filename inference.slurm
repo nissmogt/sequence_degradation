@@ -7,10 +7,11 @@
 #SBATCH --mem-per-cpu=1G
 #SBATCH --profile=ALL
 #SBATCH --time=00:01:00
-#SBATCH --array=0-9
+#SBATCH --array=0-2
 
 import os
 import subprocess
+subprocess.call(["module load MATLAB/2021a"], shell=True)
 # Activate conda environment
 #subprocess.call(["source $(conda info --base)/etc/profile.d/conda.sh \
 #                  conda activate bio"], shell=True)
@@ -22,6 +23,9 @@ hash_table = dict(zip(range(nfiles), msa_files))
 x = int(os.getenv("SLURM_ARRAY_TASK_ID"))
 msa = (hash_table.get(x)).strip(".fa")
 print(f"{msa}")
+# Write msa name to file
+with open("system_names.txt", 'a') as fp:
+    fp.write(f"{msa}\n")
 cmd=f'sbatch --job-name={msa} \
              --time=24:00:00 \
              -o logs/dca_{msa}_{x}.out \
