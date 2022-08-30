@@ -1,9 +1,6 @@
 import os
 import matlab.engine
 
-usr = os.path.expanduser("~")
-#dir_dca = os.path.join(usr, "MATLAB-Drive", "Research", "Scripts", "mf_plm_reweight")
-
 
 def inference(_pfamid, dir_dca, matlab_input, model_length, pseudocount=0.2, run=True):
     output_dir = os.path.join(os.path.dirname(matlab_input), "mf", f"pc{pseudocount:.1f}")
