@@ -54,3 +54,14 @@ class DirectCoupling:
 
     def zscore(self, dca_dataframe, reference):
         return analysis.zscore.zscore_calculation(dca_dataframe, self._score, reference)
+
+    def index_shift(self, dca_dataframe, cols, shift):
+        """
+        cols: tuple of strings
+        shift: integer
+
+        """
+        c1, c2 = cols
+        dca_dataframe[c1] = dca_dataframe[c1] + shift
+        dca_dataframe[c2] = dca_dataframe[c2] + shift
+        return dca_dataframe
