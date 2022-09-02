@@ -1,8 +1,10 @@
 import os
 import matlab.engine
+import subprocess
 
 
 def inference(_pfamid, dir_dca, matlab_input, model_length, run=True):
+    subprocess.call(["module load MATLAB/2021a"], shell=True)
     output_dir = os.path.dirname(matlab_input)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
