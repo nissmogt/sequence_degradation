@@ -92,7 +92,6 @@ class System:
                         print(f"{msa_input}")
                         n_effective_array[rep][model] = dca.pipeline_inference.inference(self._sysid, _dir_dca,
                                                                                          msa_input, model_length)
-            assert np.sum(n_effective_array) > 0
-            # Save Neff to file
-            np.save(output, n_effective_array)
+                # Save Neff to file after every replicate
+                np.save(output, n_effective_array)
             return n_effective_array
