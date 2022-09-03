@@ -25,8 +25,8 @@ with open("system_names.txt", 'a') as fp:
     fp.write(f"{msa}\n")
 cmd=f'sbatch --job-name={msa} \
              --time=24:00:00 \
-             -o logs/dca_{msa}_{x}.out \
-	     -e logs/dca_{msa}_{x}.err \
+             -o logs/dca_{msa}_2{x}.out \
+	     -e logs/dca_{msa}_2{x}.err \
       	     --account=ctbp-onuchic \
 	     --partition=ctbp-onuchic \
 	     --nodes=1 \
@@ -34,7 +34,6 @@ cmd=f'sbatch --job-name={msa} \
 	     --mail-type=fail \
 	     --mail-user=kmm5@rice.edu \
       	     --profile=ALL \
-      	     --cpus-per-task=16 \
-  	     --mem-per-cpu=8G \
+	     --exclusive\
       	     --wrap="python run_inference.py {msa} {aln_dir}"'
 subprocess.call([cmd], shell=True)
