@@ -108,3 +108,23 @@ def plot_top_zscore(dca_dataframe, n, n_effective, n_res, img_dir, extra_text=No
     plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
+
+def plot_average_ppv(ppv_array, neff_array, sysid, _sys_l, z, _dir_out, norm=1):
+    plt.figure(0)
+    _r, _n = neff_array.shape
+    avg_neff_l = np.mean(neff_array, axis=0) / _sys_l
+    avg_ppv = np.mean(ppv_array, axis=0)
+    std_ppv = np.std(ppv_array, axis=0)
+    outfile = os.path.join(_dir_out, f"avgppv_std_z{z}.png")
+    plt.errorbar(avg_neff_l, avg_ppv, yerr=std_ppv, capsize=6)
+    plt.scatter(avg_neff_l, avg_ppv * norm, label=f"z:{z}")
+    plt.ylim(-0.1, 1.1)
+    plt.legend(loc="best")
+    plt.title(f"{sysid}, nreps:{_r}")
+    plt.xlabel("average Neff/L")
+    plt.ylabel("average ppv")
+    plt.semilogx()
+    plt.grid(which="both", alpha=0.2)
+    # plt.savefig(outfile, format="png", dpi=150, bbox_inches='tight')
+    # plt.close()
+    plt.show()
