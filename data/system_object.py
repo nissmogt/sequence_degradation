@@ -77,7 +77,7 @@ class System:
         """
         output = os.path.join(self._dir_replicates, "neff_array.npy")
         if passthrough:
-            # Load neffective array
+            # Load neffective array. FUTURE: Begin from last replicate
             return np.load(output)
         else:
             nmodels = len(_len_list)
