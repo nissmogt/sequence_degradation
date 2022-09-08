@@ -148,4 +148,25 @@ def multiple_plot_average_ppv(ppv_array, n_effective_array, sysid, _sys_l, z_lis
     plt.semilogx()
     plt.grid(which="both", alpha=0.2)
     plt.savefig(outfile, format="png", dpi=200, bbox_inches='tight')
+    plt.close()
     # plt.show()
+
+
+def plot_avg_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text=""):
+    from analysis.zscore import calculate_average_zscore
+    average_z, std_z = calculate_average_zscore(z_array)
+    plt.figure(7399, figsize=(5, 5))
+    _m, _n = average_z.shape
+    neff_l = n_effective / n_res
+    for i in range(_n):
+        plt.plot(average_z[i, :])
+        plt.scatter(range(_n), average_z[i, :], edgecolors="black", label=f"neff/L:{neff_l[i]:.2f}")
+    plt.title(f"{pdbid}")
+    plt.xlabel("di rank")
+    plt.ylabel("average z-score")
+    plt.ylim(0, 25)
+    plt.legend(loc="best")
+    img_out = os.path.join(img_dir, f"{extra_text}avgz_top{_n}.png")
+    # plt.show()
+    plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
+    plt.close()
