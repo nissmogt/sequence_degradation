@@ -16,3 +16,8 @@ def zscore_calculation(dca_dataframe, dca_score, reference):
         z[k] = (scores[k] - mean) / std
     dca_dataframe.insert(3, "zscore", z)
     return dca_dataframe
+
+
+def calculate_average_zscore(dca_dataframe, n):
+    topn_z = dca_dataframe["z"][:n].to_array()
+    return np.mean(topn_z)
