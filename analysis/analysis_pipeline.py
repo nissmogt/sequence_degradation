@@ -6,7 +6,7 @@ import analysis.plots
 from analysis.validation import calculate_ppv
 
 
-def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False):
+def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False, shift=0):
     """
     Processes DCA output and returns a dataframe.
 
@@ -26,8 +26,9 @@ def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False):
     out_dca = os.path.join(dir_dca, f"{_sysid}_neff{n_effective}_all.txt")
 
     df = d.load_to_df(dca_in)
-    df_shift = d.index_shift(df, cols=("i", "j"), shift=4)
-    df = df_shift
+    if shift != 0:
+        df_shift = d.index_shift(df, cols=("i", "j"), shift=shift)
+        df = df_shift
     df_rank = d.rank_hamming(df, distance=5)
     df_dca = d.add_pdb_distances(df_rank, _df_pdb)
 
@@ -105,7 +106,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
         else:
             pos_pred_list = np.zeros((len(thresholds_list), n_replicates, n_sys))
             pair_rank_array = np.zeros_like(pos_pred_list)
-        for rep_id in range(5):
+        for rep_id in range(6):
             # Make directories for results and plots
             dir_dca_results = os.path.join(dir_replicates, f"sub{rep_id}")
             dir_contact_map = os.path.join(dir_dca_results, "images")
@@ -118,7 +119,8 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
 
                 neff = int(neffective_array[rep_id][model_id])
                 # OUTPUT ZSCORE
-                df_dca = process_dca(_dca_dir, _sysid, df_pdb, model_lengths[model_id], neff, rep_id, zcalc=True)
+                df_dca = process_dca(_dca_dir, _sysid, df_pdb, model_lengths[model_id], neff, rep_id, zcalc=True,
+                                     shift=0)
                 map_idx = 0
                 # draw_publish_dca(_pfamid, df_dca, "A", dir_contact_map)
                 # matrix = into_matrix(df_dca)
