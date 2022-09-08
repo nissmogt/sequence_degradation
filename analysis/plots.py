@@ -35,7 +35,7 @@ def compare_contact_map(dca_dataframe, dca_filtered, pdb_dataframe, pdbid, dista
     plt.ylabel("residue j")
     plt.xlim(0, Lseq + 5)
     plt.ylim(0, Lseq + 5)
-    plt.title(f"<Neff>={average_neff}, <Neff>/L={average_neff / Lseq:.2f}")
+    plt.title(f"<Neff>={average_neff: .2f}, <Neff>/L={average_neff / Lseq:.2f}")
     imgfile = os.path.join(dir_fig, f"{extra_text}z{zcut}_top{top_2n}_{average_neff}.png")
     plt.savefig(imgfile, format="png", dpi=200, bbox_inches='tight')
     plt.close()
