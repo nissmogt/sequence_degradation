@@ -62,7 +62,7 @@ def plot_score_distribution(dca_score, n_seqs, dca_dataframe, n_effective, n_res
 def plot_dist_distribution(dca_dataframe, n_effective, n_res, img_dir, extra_text=None):
     plt.figure(8927384929, figsize=(5, 5))
     heights, bins, patches = plt.hist(dca_dataframe["d"], bins=50, color="red", edgecolor="black")
-    plt.ylim(0, 60)
+    plt.ylim(0, 100)
     plt.title(f"Neff={n_effective:.2f}, Neff/L={n_effective / n_res:.2f}")
     plt.xlabel("intra-chain distance $\AA$")
     plt.ylabel("counts")
@@ -125,6 +125,27 @@ def plot_average_ppv(ppv_array, n_effective_array, sysid, _sys_l, z, _dir_out, n
     plt.ylabel("average ppv")
     plt.semilogx()
     plt.grid(which="both", alpha=0.2)
-    # plt.savefig(outfile, format="png", dpi=150, bbox_inches='tight')
-    # plt.close()
-    plt.show()
+    plt.savefig(outfile, format="png", dpi=200, bbox_inches='tight')
+    plt.close()
+    # plt.show()
+
+
+def multiple_plot_average_ppv(ppv_array, n_effective_array, sysid, _sys_l, z_list, _dir_out, norm=1):
+    _r, _n = n_effective_array.shape
+    avg_neff_l = np.mean(n_effective_array, axis=0) / _sys_l
+    plt.figure()
+    outfile = os.path.join(_dir_out, f"avgppv_std_z.png")
+    for z, z_val in enumerate(z_list):
+        avg_ppv = np.mean(ppv_array[z], axis=0)
+        std_ppv = np.std(ppv_array[z], axis=0)
+        plt.errorbar(avg_neff_l, avg_ppv, yerr=std_ppv, capsize=6)
+        plt.scatter(avg_neff_l, avg_ppv * norm, label=f"z:{z_val}")
+    plt.ylim(-0.1, 1.1)
+    plt.legend(loc="best")
+    plt.title(f"{sysid}, nreps:{_r}")
+    plt.xlabel("average Neff/L")
+    plt.ylabel("average ppv")
+    plt.semilogx()
+    plt.grid(which="both", alpha=0.2)
+    plt.savefig(outfile, format="png", dpi=200, bbox_inches='tight')
+    # plt.show()
