@@ -1,9 +1,9 @@
 import os
 import numpy as np
+
+import data.tools.array
 import data.tools.pdb as dpdb
 import analysis.dca_object as dca
-import analysis.plots
-from analysis.validation import calculate_ppv
 
 
 def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False, shift=0):
@@ -48,6 +48,9 @@ def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False, shift=0
 
 
 def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfilter=True, plots=False, passthrough=False):
+    from analysis.zscore import calculate_average_zscore
+    import analysis.plots
+    from analysis.validation import calculate_ppv
     """
     For every replicate and model, process raw DCA results, calculate Zscores, and PPV
     :param _dca_dir
@@ -80,8 +83,10 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
     if not os.path.exists(dir_ppv):
         os.makedirs(dir_ppv)
     if zfilter:
+        # DEBUG: potential bug with 100 being hardcoded
         output_ppv = os.path.join(dir_ppv, f"{pdbid}_ppv_zscore_{dca_score}_100reps.npy")
         output_pair_rank = os.path.join(dir_ppv, f"{pdbid}_ppv_pairrank_z_{dca_score}_reps100.npy")
+        output_avg_z = os.path.join(dir_ppv, f"avg_z_{pdbid}_100reps.npy")
     else:
         if npairs > 0:
             output_ppv = os.path.join(dir_ppv, f"{pdbid}_ppv_top{npairs}_{dca_score}_100reps.npy")
@@ -103,9 +108,12 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
         if npairs > 0:
             pos_pred_list = np.zeros((len(thresholds_list), n_replicates, n_sys, npairs))
             pair_rank_array = np.zeros_like(pos_pred_list)
+            topn_z_array = np.zeros((n_replicates, len(model_lengths), 10))
         else:
             pos_pred_list = np.zeros((len(thresholds_list), n_replicates, n_sys))
             pair_rank_array = np.zeros_like(pos_pred_list)
+            topn_z_array = np.zeros((n_replicates, len(model_lengths), 10))
+
         for rep_id in range(5):
             # Make directories for results and plots
             dir_dca_results = os.path.join(dir_replicates, f"sub{rep_id}")
@@ -138,11 +146,13 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                     threshold_value = thresholds_list[k]
                     if zfilter:
                         df_filtered = df_dca[df_dca["zscore"] >= threshold_value]
+                        topn_z_array[rep_id, model_id] = df_dca["zscore"][:10].to_numpy()
                         if plots:
                             print(f"{threshold_value}")
                             # zscore_contact_map(df_filtered, pdbid, neff, ncols + map_idx, df_pdb, distance_cutoff,
                             #                    dir_contact_map, threshold_value, False)
                             analysis.plots.plot_top_zscore(df_dca, 10, n_degraded_seqs, _ncols, dir_contact_map)
+                            # calculate average z-score and std for the top 10 di pairs
                             analysis.plots.compare_contact_map(df_dca, df_filtered, df_pdb, pdbid, distance_cutoff,
                                                                n_degraded_seqs, threshold_value, _ncols, map_idx,
                                                                dir_contact_map)
@@ -165,4 +175,5 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                         pos_pred_list[k][rep_id][model_id] = 0
         np.save(output_ppv, pos_pred_list)
         np.save(output_pair_rank, pair_rank_array)
-        return pos_pred_list, pair_rank_array
+        np.save(output_avg_z, topn_z_array)
+        return pos_pred_list, pair_rank_array, topn_z_array
