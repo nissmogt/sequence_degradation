@@ -17,8 +17,8 @@ def contact_map_single(couplings=None, monomer=None, n=10, x="text", distance_cu
     plt.show()
 
 
-def figure_1(dca_dataframe, dca_filtered, pdb_dataframe, pdbid, distance_cutoff, average_neff, zcut,
-             Lseq, index_shift, dir_fig, extra_text=None):
+def compare_contact_map(dca_dataframe, dca_filtered, pdb_dataframe, pdbid, distance_cutoff, average_neff, zcut,
+                        Lseq, index_shift, dir_fig, extra_text=None):
     xy_lim = np.abs(Lseq + index_shift)
     top_2n = 2 * Lseq
     plt.figure(figsize=(6, 6))
@@ -79,7 +79,7 @@ def plot_ppv(zfilter, ppv_list, neff_value, pfamid, sequence_len, threshold_val,
     plt.ylim(-0.1, 1.1)
     plt.xlabel("rank")
     plt.ylabel("PPV")
-    plt.title(f"{pfamid}, Neff:{neff_value}, Neff/L={neff_value / sequence_len:.2f}")
+    plt.title(f"{pfamid}, Neff:{neff_value:.2f}, Neff/L={neff_value / sequence_len:.2f}")
     plt.grid(which="both", alpha=0.3)
     plt.legend(loc="best")
 
