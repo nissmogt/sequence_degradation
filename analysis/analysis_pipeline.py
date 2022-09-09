@@ -77,6 +77,9 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
             model_lengths = [int(line.rstrip()) for line in fp]
             assert model_lengths[-1] > 0
     neffective_array = np.load(os.path.join(dir_replicates, "neff_array.npy"))
+    # temporary workaround until find bug that makes this array bigger by one
+    neffective_array = neffective_array[:, :-1]
+    n_replicates, n_sys = neffective_array.shape
     avg_neff = neffective_array.mean(axis=0)
     # CONTROL PPV OUTFILE NAME DEPENDING ON ZFILTER VALUE
     dca_score = "DIAPC"
@@ -106,18 +109,17 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
 
     else:
         # ELSE CALCULATE PPV
-        n_replicates, n_sys = neffective_array.shape
 
         if npairs > 0:
             pos_pred_list = np.zeros((len(thresholds_list), n_replicates, n_sys, npairs))
             pair_rank_array = np.zeros_like(pos_pred_list)
-            topn_z_array = np.zeros((n_replicates, len(model_lengths), 10))
-            topn_dist_array = np.zeros((n_replicates, len(model_lengths), 10))
+            topn_z_array = np.zeros((n_replicates, n_sys, 10))
+            topn_dist_array = np.zeros((n_replicates, n_sys, 10))
         else:
             pos_pred_list = np.zeros((len(thresholds_list), n_replicates, n_sys))
             pair_rank_array = np.zeros_like(pos_pred_list)
-            topn_z_array = np.zeros((n_replicates, len(model_lengths), 10))
-            topn_dist_array = np.zeros((n_replicates, len(model_lengths), 10))
+            topn_z_array = np.zeros((n_replicates, n_sys, 10))
+            topn_dist_array = np.zeros((n_replicates, n_sys, 10))
 
         for rep_id in range(5):
             # Make directories for results and plots
@@ -133,7 +135,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                 neff = int(neffective_array[rep_id][model_id])
                 # OUTPUT ZSCORE
                 df_dca = process_dca(_dca_dir, _sysid, df_pdb, model_lengths[model_id], neff, rep_id, zcalc=True,
-                                     shift=4)
+                                     shift=0)
                 map_idx = 0
                 # draw_publish_dca(_pfamid, df_dca, "A", dir_contact_map)
                 # matrix = into_matrix(df_dca)
