@@ -36,7 +36,7 @@ def compare_contact_map(dca_dataframe, dca_filtered, pdb_dataframe, pdbid, dista
     plt.xlim(0, Lseq + 5)
     plt.ylim(0, Lseq + 5)
     plt.title(f"<Neff>={n_effective:.2f}, <Neff>/L={n_effective / Lseq:.2f}")
-    imgfile = os.path.join(dir_fig, f"{extra_text}z{zcut}_top{top_2n}_{n_effective:.2f}.png")
+    imgfile = os.path.join(dir_fig, f"{extra_text}_z{zcut}_top{top_2n}_{n_effective:.2f}.png")
     plt.savefig(imgfile, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
@@ -54,7 +54,7 @@ def plot_score_distribution(dca_score, n_seqs, dca_dataframe, n_effective, n_res
     plt.xlabel("Z-score")
     plt.ylabel("Counts")
     plt.legend(loc="upper right")
-    img_out = os.path.join(img_dir, f"{extra_text}{dca_score}_neff{n_effective:.2f}.png")
+    img_out = os.path.join(img_dir, f"{extra_text}_{dca_score}_neff{n_effective:.2f}.png")
     plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
@@ -67,7 +67,7 @@ def plot_dist_distribution(dca_dataframe, n_effective, n_res, img_dir, extra_tex
     plt.xlabel("intra-chain distance $\AA$")
     plt.ylabel("counts")
     plt.legend(loc="best")
-    img_out = os.path.join(img_dir, f"{extra_text}distance_neff{n_effective:.2f}.png")
+    img_out = os.path.join(img_dir, f"{extra_text}_distance_neff{n_effective:.2f}.png")
     plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
@@ -84,10 +84,10 @@ def plot_ppv(zfilter, ppv_list, n_effective, pfamid, sequence_len, threshold_val
     plt.legend(loc="best")
 
     if zfilter:
-        img_out = os.path.join(img_dir, f"{extra_text}ppv_neff{n_effective:.2f}_z{threshold_val:.1f}.png")
+        img_out = os.path.join(img_dir, f"{extra_text}_ppv_neff{n_effective:.2f}_z{threshold_val:.1f}.png")
         plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     else:
-        img_out = os.path.join(img_dir, f"{extra_text}ppv_neff{n_effective:.2f}_top{threshold_val:.1f}.png")
+        img_out = os.path.join(img_dir, f"{extra_text}_ppv_neff{n_effective:.2f}_top{threshold_val:.1f}.png")
         plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
@@ -104,7 +104,7 @@ def plot_top_zscore(dca_dataframe, n, n_effective, n_res, img_dir, extra_text=No
     plt.ylabel("z-score")
     plt.ylim(0, 25)
     plt.legend(loc="best")
-    img_out = os.path.join(img_dir, f"{extra_text}top{n}_avgz_neff{n_effective:.2f}.png")
+    img_out = os.path.join(img_dir, f"{extra_text}_top{n}_avgz_neff{n_effective:.2f}.png")
     plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 
@@ -166,7 +166,28 @@ def plot_avg_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text=""):
     plt.ylabel("average z-score")
     plt.ylim(0, 25)
     plt.legend(loc="best")
-    img_out = os.path.join(img_dir, f"{extra_text}avgz_top{_n}.png")
+    img_out = os.path.join(img_dir, f"{extra_text}_avgz_top{_n}.png")
+    # plt.show()
+    plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
+    plt.close()
+
+
+def plot_avg_dist(dist_array, cutoff, n_effective, pdbid, n_res, img_dir, extra_text=""):
+    average_dist = np.mean(dist_array, axis=0)
+    plt.figure(799, figsize=(6, 8))
+    _m, _n = average_dist.shape
+    neff_l = n_effective / n_res
+    for i in range(_n):
+        plt.plot(range(1, _n+1), average_dist[i, :])
+        plt.scatter(range(1, _n+1), average_dist[i, :], edgecolors="black", label=f"neff/L:{neff_l[i]:.2f}")
+    plt.fill_between(range(1, _n+1), cutoff, alpha=0.2)
+    plt.hlines(cutoff, 1, _n, colors="black", linestyles="dashed", label=f"{cutoff}Å")
+    plt.title(f"{pdbid}")
+    plt.xlabel("di rank")
+    plt.ylabel("average distance (Å)")
+    plt.ylim(0, 30)
+    plt.legend(loc="best")
+    img_out = os.path.join(img_dir, f"{extra_text}_avg_dist_top{_n}.png")
     # plt.show()
     plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
