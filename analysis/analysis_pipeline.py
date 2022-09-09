@@ -64,6 +64,8 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
     :return:
     """
     distance_cutoff = 8
+    # prefix = f"{distance_cutoff}A"
+    prefix = 0
     dir_system = os.path.join(_dca_dir, "systems", _sysid)
     dir_replicates = os.path.join(dir_system, "replicates")
     dir_results = os.path.join(dir_system, "results")
@@ -86,7 +88,8 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
         # DEBUG: potential bug with 100 being hardcoded
         output_ppv = os.path.join(dir_ppv, f"{pdbid}_ppv_zscore_{dca_score}_100reps.npy")
         output_pair_rank = os.path.join(dir_ppv, f"{pdbid}_ppv_pairrank_z_{dca_score}_reps100.npy")
-        output_avg_z = os.path.join(dir_ppv, f"avg_z_{pdbid}_100reps.npy")
+        output_z = os.path.join(dir_ppv, f"avg_z_{pdbid}_100reps.npy")
+        output_dist = os.path.join(dir_ppv, f"avg_dist_{pdbid}_100reps.npy")
     else:
         if npairs > 0:
             output_ppv = os.path.join(dir_ppv, f"{pdbid}_ppv_top{npairs}_{dca_score}_100reps.npy")
@@ -109,10 +112,12 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
             pos_pred_list = np.zeros((len(thresholds_list), n_replicates, n_sys, npairs))
             pair_rank_array = np.zeros_like(pos_pred_list)
             topn_z_array = np.zeros((n_replicates, len(model_lengths), 10))
+            topn_dist_array = np.zeros((n_replicates, len(model_lengths), 10))
         else:
             pos_pred_list = np.zeros((len(thresholds_list), n_replicates, n_sys))
             pair_rank_array = np.zeros_like(pos_pred_list)
             topn_z_array = np.zeros((n_replicates, len(model_lengths), 10))
+            topn_dist_array = np.zeros((n_replicates, len(model_lengths), 10))
 
         for rep_id in range(5):
             # Make directories for results and plots
@@ -138,24 +143,27 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                     # plot_score_distribution(dca_score, n_degraded_seqs, df_dca, neff, ncols, dir_contact_map)
                     if zfilter:
                         print("zfilter")
-                        analysis.plots.plot_dist_distribution(df_dca[:750], n_degraded_seqs, _ncols, dir_contact_map)
+                        analysis.plots.plot_dist_distribution(df_dca[:750], n_degraded_seqs,
+                                                              _ncols, dir_contact_map, extra_text=prefix)
                         analysis.plots.plot_score_distribution("zscore", n_degraded_seqs, df_dca, neff, _ncols,
-                                                               dir_contact_map)
+                                                               dir_contact_map, extra_text=prefix)
 
                 for k in range(len(thresholds_list)):
                     threshold_value = thresholds_list[k]
                     if zfilter:
                         df_filtered = df_dca[df_dca["zscore"] >= threshold_value]
                         topn_z_array[rep_id, model_id] = df_dca["zscore"][:10].to_numpy()
+                        topn_dist_array[rep_id, model_id] = df_dca["d"][:10].to_numpy()
                         if plots:
                             print(f"{threshold_value}")
                             # zscore_contact_map(df_filtered, pdbid, neff, ncols + map_idx, df_pdb, distance_cutoff,
                             #                    dir_contact_map, threshold_value, False)
-                            analysis.plots.plot_top_zscore(df_dca, 10, n_degraded_seqs, _ncols, dir_contact_map)
+                            analysis.plots.plot_top_zscore(df_dca, 10, n_degraded_seqs, _ncols,
+                                                           dir_contact_map, extra_text=prefix)
                             # calculate average z-score and std for the top 10 di pairs
                             analysis.plots.compare_contact_map(df_dca, df_filtered, df_pdb, pdbid, distance_cutoff,
                                                                n_degraded_seqs, threshold_value, _ncols, map_idx,
-                                                               dir_contact_map)
+                                                               dir_contact_map, extra_text=prefix)
                     else:
                         df_filtered = df_dca[:threshold_value]
 
@@ -163,7 +171,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                         ppv, pair_rank = calculate_ppv(df_filtered, distance_cutoff)
                         if plots:
                             analysis.plots.plot_ppv(zfilter, ppv, neff, _sysid, _ncols,
-                                                    threshold_value, dir_contact_map)
+                                                    threshold_value, dir_contact_map, extra_text=prefix)
                             print("plotting PPV")
                         if npairs > 0:  # to use in plotting ranked pairs
                             pos_pred_list[k][rep_id][model_id] = ppv
@@ -175,5 +183,6 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                         pos_pred_list[k][rep_id][model_id] = 0
         np.save(output_ppv, pos_pred_list)
         np.save(output_pair_rank, pair_rank_array)
-        np.save(output_avg_z, topn_z_array)
-        return pos_pred_list, pair_rank_array, topn_z_array
+        np.save(output_z, topn_z_array)
+        np.save(output_dist, topn_dist_array)
+        return pos_pred_list, pair_rank_array, topn_z_array, topn_dist_array

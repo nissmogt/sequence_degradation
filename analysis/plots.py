@@ -130,11 +130,11 @@ def plot_average_ppv(ppv_array, n_effective_array, sysid, _sys_l, z, _dir_out, n
     # plt.show()
 
 
-def multiple_plot_average_ppv(ppv_array, n_effective_array, sysid, _sys_l, z_list, _dir_out, norm=1):
+def multiple_plot_average_ppv(ppv_array, n_effective_array, sysid, _sys_l, z_list, _dir_out, norm=1, extra_text=""):
     _r, _n = n_effective_array.shape
     avg_neff_l = np.mean(n_effective_array, axis=0) / _sys_l
     plt.figure()
-    outfile = os.path.join(_dir_out, f"avgppv_std_z.png")
+    outfile = os.path.join(_dir_out, f"{extra_text}_avgppv_std_z.png")
     for z, z_val in enumerate(z_list):
         avg_ppv = np.mean(ppv_array[z], axis=0)
         std_ppv = np.std(ppv_array[z], axis=0)
