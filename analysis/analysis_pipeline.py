@@ -135,7 +135,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
                 neff = int(neffective_array[rep_id][model_id])
                 # OUTPUT ZSCORE
                 df_dca = process_dca(_dca_dir, _sysid, df_pdb, model_lengths[model_id], neff, rep_id, zcalc=True,
-                                     shift=0)
+                                     shift=4)
                 map_idx = 0
                 # draw_publish_dca(_pfamid, df_dca, "A", dir_contact_map)
                 # matrix = into_matrix(df_dca)

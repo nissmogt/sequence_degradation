@@ -214,13 +214,38 @@ def plot_fraction_below_threshold(average_distance_array, average_neffective_arr
         plt.plot(average_neffective_array / n_seq, r)
         plt.scatter(average_neffective_array / n_seq, r, label=f"<={cutoff[j]}Å", edgecolors="black")
     plt.xlabel("average Neff/L")
-    plt.ylabel("fraction of DI pairs <= distance")
+    plt.ylabel("fraction of DI pairs <= avg. distance")
     plt.semilogx()
     plt.title(f"{_sysid}")
     plt.legend(loc="best")
     plt.grid(which="both", alpha=0.3, color="gray")
     if save:
         img_out = os.path.join(img_dir, f"{extra_text}_fraction_below_distance_top{n_pairs}.png")
+        plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
+        plt.close()
+    else:
+        plt.show()
+
+
+def plot_neff_vs_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text="", save=True):
+    from analysis.zscore import calculate_average_zscore
+    average_z, std_z = calculate_average_zscore(z_array)
+    plt.figure(78919, figsize=(6, 8))
+    _m, _n = average_z.shape
+    neff_l = n_effective / n_res
+    colors = plt.cm.tab10(range(10))
+    for i in range(_n):
+        x = [neff_l, average_z[:, i]]
+        plt.scatter(x[0], x[1], edgecolors="black", color=colors[i], label=f"di rank: {i}")
+    plt.title(f"{pdbid}")
+    plt.xlabel("neff/L")
+    plt.ylabel("average z-score")
+    # plt.ylim(0, 25)
+    plt.legend(loc="best")
+    plt.semilogx()
+    plt.grid(which="both", alpha=0.3)
+    if save:
+        img_out = os.path.join(img_dir, f"{extra_text}_neffl_vs_avgz_top{_n}.png")
         plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
         plt.close()
     else:
