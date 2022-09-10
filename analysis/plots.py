@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib import cm
 import os
 import numpy as np
 
@@ -160,10 +161,11 @@ def plot_avg_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text="", 
     average_z, std_z = calculate_average_zscore(z_array)
     plt.figure(7399, figsize=(6, 8))
     _m, _n = average_z.shape
+    colors = cm.gist_rainbow(np.linspace(0, 1, _m))
     neff_l = n_effective / n_res
     for i in range(_m):
-        plt.plot(average_z[i, :])
-        plt.scatter(range(_n), average_z[i, :], edgecolors="black", label=f"neff/L:{neff_l[i]:.2f}")
+        plt.plot(average_z[i, :], color=colors[i])
+        plt.scatter(range(_n), average_z[i, :], color=colors[i], edgecolors="black", label=f"neff/L:{neff_l[i]:.2f}")
     plt.title(f"{pdbid}")
     plt.xlabel("di rank")
     plt.ylabel("average z-score")
@@ -182,16 +184,19 @@ def plot_avg_dist(dist_array, cutoff, n_effective, pdbid, n_res, img_dir, extra_
     plt.figure(799, figsize=(6, 8))
     _m, _n = average_dist.shape
     neff_l = n_effective / n_res
-    for i in range(_n):
-        plt.plot(range(1, _n+1), average_dist[i, :])
-        plt.scatter(range(1, _n+1), average_dist[i, :], edgecolors="black", label=f"neff/L:{neff_l[i]:.2f}")
+    colors = cm.gist_rainbow(np.linspace(0, 1, _m))
+    for i in range(_m):
+        plt.plot(range(1, _n+1), average_dist[i, :], color=colors[i])
+        plt.scatter(range(1, _n+1), average_dist[i, :], color=colors[i],
+                    edgecolors="black", label=f"neff/L:{neff_l[i]:.2f}")
     plt.fill_between(range(1, _n+1), cutoff, alpha=0.2)
     plt.hlines(cutoff, 1, _n, colors="black", linestyles="dashed", label=f"{cutoff}Å")
     plt.title(f"{pdbid}")
     plt.xlabel("di rank")
     plt.ylabel("average distance (Å)")
     plt.ylim(0, 30)
-    plt.legend(loc="best")
+    # plt.legend(loc="best")
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.20), ncol=5, fancybox=True)
     if save:
         img_out = os.path.join(img_dir, f"{extra_text}_avg_dist_top{_n}.png")
         plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
