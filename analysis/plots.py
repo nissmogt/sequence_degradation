@@ -236,6 +236,7 @@ def plot_neff_vs_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text=
     from analysis.zscore import calculate_average_zscore
     average_z, std_z = calculate_average_zscore(z_array)
     plt.figure(78919, figsize=(6, 8))
+    plt.vlines(1, 0, 25, linestyles="dashed", color="black")
     _m, _n = average_z.shape
     neff_l = n_effective / n_res
     colors = plt.cm.tab10(range(10))
@@ -249,6 +250,7 @@ def plot_neff_vs_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text=
     plt.legend(loc="best")
     plt.semilogx()
     plt.grid(which="both", alpha=0.3)
+    plt.ylim(-1, 25)
     if save:
         img_out = os.path.join(img_dir, f"{extra_text}_neffl_vs_avgz_top{_n}.png")
         plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
