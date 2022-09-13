@@ -235,6 +235,7 @@ def plot_fraction_below_threshold(average_distance_array, average_neffective_arr
 def plot_neff_vs_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text="", save=True):
     from analysis.zscore import calculate_average_zscore
     average_z, std_z = calculate_average_zscore(z_array)
+    ptp = np.ptp(average_z, axis=1)
     plt.figure(78919, figsize=(6, 8))
     plt.vlines(1, 0, 25, linestyles="dashed", color="black")
     _m, _n = average_z.shape
@@ -246,6 +247,7 @@ def plot_neff_vs_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text=
     plt.title(f"{pdbid}")
     plt.xlabel("neff/L")
     plt.ylabel("average z-score")
+    plt.plot(ptp, color="black", linestyle="dotted")
     # plt.ylim(0, 25)
     plt.legend(loc="best")
     plt.semilogx()
@@ -253,6 +255,31 @@ def plot_neff_vs_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text=
     plt.ylim(-1, 25)
     if save:
         img_out = os.path.join(img_dir, f"{extra_text}_neffl_vs_avgz_top{_n}.png")
+        plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
+        plt.close()
+    else:
+        plt.show()
+
+
+def plot_ptp(z_array, n_effective, pdbid, n_res, img_dir, extra_text="", save=True):
+    from analysis.zscore import calculate_average_zscore
+    average_z, std_z = calculate_average_zscore(z_array)
+    ptp = np.ptp(average_z, axis=1)
+    plt.figure(919, figsize=(5, 5))
+    plt.vlines(1, 0, 10, linestyles="dashed", color="black")
+    _m, _n = average_z.shape
+    neff_l = n_effective / n_res
+    for i in range(_m):
+        plt.scatter(neff_l, ptp, color="xkcd:purple", marker="+")
+    plt.title(f"{pdbid}")
+    plt.xlabel("neff/L")
+    plt.ylabel("ptp(average z-score)")
+    plt.legend(loc="best")
+    plt.semilogx()
+    plt.ylim(-1, 11)
+    plt.grid(which="both", alpha=0.3)
+    if save:
+        img_out = os.path.join(img_dir, f"{extra_text}_ptp_neffl_vs_avgz_top{_n}.png")
         plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
         plt.close()
     else:
