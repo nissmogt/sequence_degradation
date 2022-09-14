@@ -47,7 +47,8 @@ def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False, shift=0
         return df_dca
 
 
-def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfilter=True, plots=False, passthrough=False):
+def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, NR=0,
+                        zfilter=True, plots=False, passthrough=False):
     from analysis.zscore import calculate_average_zscore
     import analysis.plots
     from analysis.validation import calculate_ppv
@@ -121,7 +122,9 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, zfi
             topn_z_array = np.zeros((n_replicates, n_sys, 10))
             topn_dist_array = np.zeros((n_replicates, n_sys, 10))
 
-        for rep_id in range(5):
+        if NR == 0:
+            NR = n_replicates
+        for rep_id in range(NR):
             # Make directories for results and plots
             dir_dca_results = os.path.join(dir_replicates, f"sub{rep_id}")
             dir_contact_map = os.path.join(dir_dca_results, "images")
