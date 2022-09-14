@@ -235,7 +235,6 @@ def plot_fraction_below_threshold(average_distance_array, average_neffective_arr
 def plot_neff_vs_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text="", save=True):
     from analysis.zscore import calculate_average_zscore
     average_z, std_z = calculate_average_zscore(z_array)
-    ptp = np.ptp(average_z, axis=1)
     plt.figure(78919, figsize=(6, 8))
     plt.vlines(1, 0, 25, linestyles="dashed", color="black")
     _m, _n = average_z.shape
@@ -247,7 +246,6 @@ def plot_neff_vs_zscore(z_array, n_effective, pdbid, n_res, img_dir, extra_text=
     plt.title(f"{pdbid}")
     plt.xlabel("neff/L")
     plt.ylabel("average z-score")
-    plt.plot(ptp, color="black", linestyle="dotted")
     # plt.ylim(0, 25)
     plt.legend(loc="best")
     plt.semilogx()
