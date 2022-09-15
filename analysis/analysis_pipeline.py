@@ -138,7 +138,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, NR=
                 # OUTPUT ZSCORE
                 if _sysid == "1cc8A":
                     df_dca = process_dca(_dca_dir, _sysid, df_pdb, model_lengths[model_id], neff, rep_id, zcalc=True,
-                                         shift=4)
+                                         shift=0)
                 else:
                     df_dca = process_dca(_dca_dir, _sysid, df_pdb, model_lengths[model_id], neff, rep_id, zcalc=True,
                                          shift=0)
