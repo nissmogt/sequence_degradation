@@ -9,8 +9,8 @@ from analysis.plots import (plot_average_ppv, multiple_plot_average_ppv, plot_av
                             plot_avg_dist, plot_fraction_below_threshold, plot_ptp)
 
 sysid = sys.argv[1].strip(".fa")
-root = os.path.join("/scratch", "kmm5")
-dir_pdb = os.path.join("/scratch", "pdb")
+root = os.path.join("/scratch", "kmm5", "single")
+dir_pdb = os.path.join("/scratch", "kmm5", "pdb")
 # sysid = "1cc8A"
 # root = os.path.join("tests", "single")
 # dir_pdb = "pdb"
