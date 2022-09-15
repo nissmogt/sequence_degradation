@@ -6,14 +6,16 @@ import data.tools.pdb as dpdb
 import analysis.dca_object as dca
 
 
-def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False, shift=0):
+def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False, shift=0, replicates=True):
     """
     Processes DCA output and returns a dataframe.
-
     """
     # File name definitions and directory creation
     raw_dca = f"DI_{_sysid}_n{_nseqs}.txt"
-    dir_dca = os.path.join(root, "systems", _sysid, "replicates", f"sub{_rep}")
+    if replicates:
+        dir_dca = os.path.join(root, "systems", _sysid, "replicates", f"sub{_rep}")
+    else:
+        dir_dca = os.path.join(root, "systems", _sysid)
     dca_in = os.path.join(dir_dca, raw_dca)
     outfile = os.path.join(dir_dca, f"{_sysid}_neff{_neff}_pc0.2_all.txt")
 
