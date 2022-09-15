@@ -14,7 +14,6 @@ print(f"System ID: {sysid}\nPath: {dca_dir}")
 msa_file = os.path.join(dca_dir, "systems", sysid, f"{sysid}_filtered_25.fasta")
 dir_out = os.path.join(os.path.dirname(msa_file), "results")
 neff_file = os.path.join(os.path.dirname(msa_file), f"replicates/neff_array.npy")
-msa = os.path.join(dca_dir, "systems", sysid, f"{sysid}_filtered_25.fasta")
 seq_l = check_length(msa_file)
 threshold_values = [12, 10, 9, 8, 5.6, 4.5, 4, 3.5, 2.5, 1]
 
