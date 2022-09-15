@@ -78,15 +78,17 @@ class System:
         """
         Infer DCA couplings for every downsampled ensemble of replicates
         """
-        output = os.path.join(self._dir_replicates, "neff_array.npy")
         if _nreplicates == 1:
             # For one DCA run
+            output = os.path.join(self._dir_sys, "neff_array.npy")
             msa_input = self._filtered_msa
             model_length = self._nseq
             n_effective = dca.pipeline_inference.inference(self._sysid, _dir_dca, msa_input, model_length)
             np.save(output, n_effective)
+            return n_effective
 
         else:
+            output = os.path.join(self._dir_replicates, "neff_array.npy")
             if passthrough:
                 # Load neffective array. FUTURE: Begin from last replicate
                 return np.load(output)

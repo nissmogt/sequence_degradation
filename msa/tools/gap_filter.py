@@ -4,7 +4,7 @@ import numpy as np
 import csv
 
 
-def gap_filter(msa_input, gap_threshold=0.25, external_dir=False):
+def gap_filter(msa_input, gap_threshold=0.25, external_dir=None):
     """
     First removes insertions (.) and lowercase letters, if there are any.
     Then counts the number of gaps in each sequence and from this,
