@@ -138,8 +138,9 @@ def multiple_plot_average_ppv(ppv_array, n_effective_array, sysid, _sys_l, z_lis
     plt.figure()
     for z, z_val in enumerate(z_list):
         avg_ppv = np.mean(ppv_array[z], axis=0)
-        std_ppv = np.std(ppv_array[z], axis=0)
-        plt.errorbar(avg_neff_l, avg_ppv, yerr=std_ppv, capsize=6)
+        # std_ppv = np.std(ppv_array[z], axis=0)
+        # plt.errorbar(avg_neff_l, avg_ppv, yerr=std_ppv, capsize=6)
+        plt.plot(avg_neff_l, avg_ppv*norm)
         plt.scatter(avg_neff_l, avg_ppv * norm, label=f"z:{z_val}")
     plt.ylim(-0.1, 1.1)
     plt.legend(loc="best")
