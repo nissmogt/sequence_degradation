@@ -27,13 +27,15 @@ class System:
     def make_new_dirs(self, _root, _out, replicates=True):
         # DIRECTORY STRUCTURE INITIALIZATION
         self._dir_sys = os.path.join(_out, "systems", self._sysid)
-        if replicates:
-            self._dir_replicates = os.path.join(self._dir_sys, "replicates")
         self._dir_results = os.path.join(self._dir_sys, "results")
         self._dir_avg_results = os.path.join(self._dir_results, "average_ppv")
+        if replicates:
+            self._dir_replicates = os.path.join(self._dir_sys, "replicates")
+            list_dir = [self._dir_sys, self._dir_results, self._dir_avg_results, self._dir_replicates]
+        else:
+            list_dir = [self._dir_sys, self._dir_results, self._dir_avg_results]
 
         # MAKE DIRECTORY IF DOESNT EXIST
-        list_dir = [self._dir_sys, self._dir_results, self._dir_avg_results, self._dir_replicates]
         for entry in list_dir:
             if not os.path.exists(entry):
                 os.makedirs(entry)
@@ -78,7 +80,11 @@ class System:
         """
         output = os.path.join(self._dir_replicates, "neff_array.npy")
         if _nreplicates == 1:
-            n_effective_array = dca.pipeline_inference.inference(self._sysid, _dir_dca, msa_input, model_length)
+            # For one DCA run
+            msa_input = self._filtered_msa
+            model_length = self._nseq
+            n_effective = dca.pipeline_inference.inference(self._sysid, _dir_dca, msa_input, model_length)
+            np.save(output, n_effective)
 
         else:
             if passthrough:
