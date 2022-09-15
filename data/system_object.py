@@ -24,10 +24,11 @@ class System:
     def set_align_dir(self, directory):
         self._dir_aln = directory
 
-    def make_new_dirs(self, _root, _out):
+    def make_new_dirs(self, _root, _out, replicates=True):
         # DIRECTORY STRUCTURE INITIALIZATION
         self._dir_sys = os.path.join(_out, "systems", self._sysid)
-        self._dir_replicates = os.path.join(self._dir_sys, "replicates")
+        if replicates:
+            self._dir_replicates = os.path.join(self._dir_sys, "replicates")
         self._dir_results = os.path.join(self._dir_sys, "results")
         self._dir_avg_results = os.path.join(self._dir_results, "average_ppv")
 
@@ -76,22 +77,26 @@ class System:
         Infer DCA couplings for every downsampled ensemble of replicates
         """
         output = os.path.join(self._dir_replicates, "neff_array.npy")
-        if passthrough:
-            # Load neffective array. FUTURE: Begin from last replicate
-            return np.load(output)
+        if _nreplicates == 1:
+            n_effective_array = dca.pipeline_inference.inference(self._sysid, _dir_dca, msa_input, model_length)
+
         else:
-            nmodels = len(_len_list)
-            n_effective_array = np.zeros((_nreplicates, nmodels))  # initialize the array by number of replicates
-            for rep in range(_nreplicates):
-                msa_rep_dir = os.path.join(self._dir_replicates, f"sub{rep}")
-                for model in range(nmodels):
-                    model_length = _len_list[model]
-                    if model_length > 0:
-                        msa_input = os.path.join(msa_rep_dir, f"{self._sysid}_n{model_length}_sub{rep}.fasta")
-                        print(f"PFAM: {self._sysid} REP: {rep} N{model}: {model_length}")
-                        print(f"{msa_input}")
-                        n_effective_array[rep][model] = dca.pipeline_inference.inference(self._sysid, _dir_dca,
-                                                                                         msa_input, model_length)
-                # Save Neff to file after every replicate
-                np.save(output, n_effective_array)
-            return n_effective_array
+            if passthrough:
+                # Load neffective array. FUTURE: Begin from last replicate
+                return np.load(output)
+            else:
+                nmodels = len(_len_list)
+                n_effective_array = np.zeros((_nreplicates, nmodels))  # initialize the array by number of replicates
+                for rep in range(_nreplicates):
+                    msa_rep_dir = os.path.join(self._dir_replicates, f"sub{rep}")
+                    for model in range(nmodels):
+                        model_length = _len_list[model]
+                        if model_length > 0:
+                            msa_input = os.path.join(msa_rep_dir, f"{self._sysid}_n{model_length}_sub{rep}.fasta")
+                            print(f"PFAM: {self._sysid} REP: {rep} N{model}: {model_length}")
+                            print(f"{msa_input}")
+                            n_effective_array[rep][model] = dca.pipeline_inference.inference(self._sysid, _dir_dca,
+                                                                                             msa_input, model_length)
+                    # Save Neff to file after every replicate
+                    np.save(output, n_effective_array)
+                return n_effective_array
