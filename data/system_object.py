@@ -72,7 +72,7 @@ class System:
             list_of_len = msa.msa_functions.generate_replicates(self._filtered_msa, 100, self._dir_replicates)
         return list_of_len
 
-    def run_inference(self, _len_list, _nreplicates, _dir_dca, passthrough=False):
+    def run_inference(self, _nreplicates, _dir_dca, _len_list=None, passthrough=False):
         """
         Infer DCA couplings for every downsampled ensemble of replicates
         """
