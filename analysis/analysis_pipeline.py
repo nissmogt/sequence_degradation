@@ -21,9 +21,6 @@ def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False, shift=0
     d = dca.DirectCoupling()
     d.set_sysid(_sysid)
     d.set_score("diapc")
-    neff_array = np.load(os.path.join(root, "systems", _sysid, "replicates", "neff_array.npy"))
-    n_effective = neff_array[0][0]
-    out_dca = os.path.join(dir_dca, f"{_sysid}_neff{n_effective}_all.txt")
 
     df = d.load_to_df(dca_in)
     if shift != 0:
