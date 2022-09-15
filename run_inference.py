@@ -4,13 +4,13 @@ import sys
 import data.system_object
 
 # Single DCA run
-# sysid = sys.argv[1].strip(".fa")
-# aln_dir = sys.argv[2]
-sysid = "1cc8A"
-aln_dir = "aln"
+sysid = sys.argv[1].strip(".fa")
+aln_dir = sys.argv[2]
+# sysid = "1cc8A"
+# aln_dir = "aln"
 root = os.getcwd()
-# out = "/scratch/kmm5/single/"
-out = "tests/single/"
+out = "/scratch/kmm5/single/"
+# out = "tests/single/"
 if not os.path.exists(out):
     os.makedirs(out)
 matlab_dir = os.path.join(root, "mf_plm_reweight")
