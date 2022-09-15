@@ -151,7 +151,7 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, NR=
                     # plot_score_distribution(dca_score, n_degraded_seqs, df_dca, neff, ncols, dir_contact_map)
                     if zfilter:
                         print("zfilter")
-                        analysis.plots.plot_dist_distribution(df_dca[:750], n_degraded_seqs,
+                        analysis.plots.plot_dist_distribution(df_dca[:750], neff,
                                                               _ncols, dir_contact_map, extra_text=prefix)
                         analysis.plots.plot_score_distribution("zscore", n_degraded_seqs, df_dca, neff, _ncols,
                                                                dir_contact_map, extra_text=prefix)
@@ -166,11 +166,11 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, NR=
                             print(f"{threshold_value}")
                             # zscore_contact_map(df_filtered, pdbid, neff, ncols + map_idx, df_pdb, distance_cutoff,
                             #                    dir_contact_map, threshold_value, False)
-                            analysis.plots.plot_top_zscore(df_dca, 10, n_degraded_seqs, _ncols,
+                            analysis.plots.plot_top_zscore(df_dca, 10, neff, _ncols,
                                                            dir_contact_map, extra_text=prefix)
                             # calculate average z-score and std for the top 10 di pairs
                             analysis.plots.compare_contact_map(df_dca, df_filtered, df_pdb, pdbid, distance_cutoff,
-                                                               n_degraded_seqs, threshold_value, _ncols, map_idx,
+                                                               neff, threshold_value, _ncols, map_idx,
                                                                dir_contact_map, extra_text=prefix)
                     else:
                         df_filtered = df_dca[:threshold_value]

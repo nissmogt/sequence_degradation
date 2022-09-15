@@ -52,7 +52,7 @@ if plots:
     # plot_score_distribution(dca_score, n_degraded_seqs, df_dca, neff, ncols, dir_contact_map)
     if zfilter:
         print("zfilter")
-        analysis.plots.plot_dist_distribution(df_dca[:750], n_degraded_seqs,
+        analysis.plots.plot_dist_distribution(df_dca[:750], neff,
                                               _ncols, dir_contact_map, extra_text=prefix)
         analysis.plots.plot_score_distribution("zscore", n_degraded_seqs, df_dca, neff, _ncols,
                                                dir_contact_map, extra_text=prefix)
@@ -62,7 +62,7 @@ pair_rank_array = np.zeros_like(pos_pred_list)
 if plots:
     # plot contact map without filter
     analysis.plots.compare_contact_map(df_dca, df_dca[:10], df_pdb, sysid, distance_cutoff,
-                                       n_degraded_seqs, 0, _ncols, map_idx,
+                                       neff, 0, _ncols, map_idx,
                                        dir_contact_map, extra_text="top_10")
 for k in range(len(thresholds_list)):
     threshold_value = thresholds_list[k]
@@ -72,11 +72,11 @@ for k in range(len(thresholds_list)):
         topn_dist_array = df_dca["d"][:10].to_numpy()
         if plots:
             print(f"{threshold_value}")
-            analysis.plots.plot_top_zscore(df_dca, 10, n_degraded_seqs, _ncols,
+            analysis.plots.plot_top_zscore(df_dca, 10, neff, _ncols,
                                            dir_contact_map, extra_text=prefix)
             # calculate average z-score and std for the top 10 di pairs
             analysis.plots.compare_contact_map(df_dca, df_filtered, df_pdb, sysid, distance_cutoff,
-                                               n_degraded_seqs, threshold_value, _ncols, map_idx,
+                                               neff, threshold_value, _ncols, map_idx,
                                                dir_contact_map, extra_text=prefix)
     else:
         df_filtered = df_dca[:threshold_value]
