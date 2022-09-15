@@ -27,8 +27,13 @@ nseq = check_nseq(msa_file)
 thresholds_list = [12, 10, 9, 8, 5.6, 4.5, 4, 3.5, 2.5, 1]
 
 df_pdb = data.tools.pdb.pipeline_pdb(sysid, dir_pdb)
-df_dca = process_dca(root=root, _sysid=sysid, _df_pdb=df_pdb, _nseqs=nseq, _neff=neff, _rep=1, zcalc=True,
-                     shift=0, replicates=False)
+if sysid == "1cc8A":
+    df_dca = process_dca(root=root, _sysid=sysid, _df_pdb=df_pdb, _nseqs=nseq, _neff=neff, _rep=1, zcalc=True,
+                         shift=4, replicates=False)
+else:
+    df_dca = process_dca(root=root, _sysid=sysid, _df_pdb=df_pdb, _nseqs=nseq, _neff=neff, _rep=1, zcalc=True,
+                         shift=0, replicates=False)
+
 n_degraded_seqs = nseq
 _ncols = seq_l
 dir_contact_map = os.path.join(dir_sys, "images")
