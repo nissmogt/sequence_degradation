@@ -3,18 +3,19 @@ import os
 import sys
 import data.system_object
 
+# Single DCA run
 sysid = sys.argv[1].strip(".fa")
 aln_dir = sys.argv[2]
 root = os.getcwd()
-out = "/scratch/kmm5/"
+out = "/scratch/kmm5/single/"
+if not os.path.exists(out):
+    os.mkdir(out)
 matlab_dir = os.path.join(root, "mf_plm_reweight")
 print(f"System ID: {sysid}\nRoot folder: {root}\noutput folder: {out}")
 
 s = data.system_object.System()
 s.set_sysid(sysid)
 s.set_align_dir(os.path.join(root, aln_dir))
-s.make_new_dirs(root, out)
+s.make_new_dirs(root, out, replicates=False)
 s.check_dir()
-s.filter(run=True)
-list_len = s.replicates(run=True)
-list_neff = s.run_inference(list_len, 70, matlab_dir, passthrough=False)
+list_neff = s.run_inference(_len_list=None, _nreplicates=1, _dir_dca=matlab_dir, passthrough=False)
