@@ -7,13 +7,13 @@
 #SBATCH --mem-per-cpu=1G
 #SBATCH --profile=ALL
 #SBATCH --time=00:01:00
-#SBATCH --array=0-1
+#SBATCH --array=0-9
 
 import os
 import subprocess
 subprocess.call(["module load MATLAB/2021a"], shell=True)
 
-aln_dir = "rerun"
+aln_dir = "done"
 msa_files = os.listdir(aln_dir)
 nfiles = len(msa_files)
 hash_table = dict(zip(range(nfiles), msa_files))
@@ -24,9 +24,9 @@ print(f"{msa}, {aln_dir}, {x}")
 with open("system_names.txt", 'a') as fp:
     fp.write(f"{msa}\n")
 cmd=f'sbatch --job-name={msa} \
-             --time=24:00:00 \
-             -o logs/dca_{msa}_{x}.out \
-	     -e logs/dca_{msa}_{x}.err \
+             --time=2:00:00 \
+             -o logs/single_dca_{msa}_{x}.out \
+	     -e logs/single_dca_{msa}_{x}.err \
       	     --account=ctbp-onuchic \
 	     --partition=ctbp-onuchic \
 	     --nodes=1 \

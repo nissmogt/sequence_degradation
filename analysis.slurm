@@ -22,7 +22,7 @@ x = int(os.getenv("SLURM_ARRAY_TASK_ID"))
 msa = (hash_table.get(x)).strip(".fa")
 print(f"{msa}")
 cmd=f'sbatch --job-name={msa} \
-             --time=24:00:00 \
+             --time=0:20:00 \
              -o logs/a_{msa}_{x}.out \
 	     -e logs/a_{msa}_{x}.err \
       	     --account=ctbp-onuchic \
