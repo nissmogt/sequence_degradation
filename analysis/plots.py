@@ -53,7 +53,7 @@ def plot_score_distribution(_dca_score, n_seqs, dca_dataframe, n_effective, n_re
     mean = dca_dataframe[_dca_score].mean()
     std = dca_dataframe[_dca_score].std()
 
-    assert 1 <= np.abs((bins[2] - bins[1]) * np.sum(heights)) <= 1.04
+    print(np.abs((bins[2] - bins[1]) * np.sum(heights)))
     plt.vlines(mean, 0, max(heights), color="black", linestyles="dashed", label=f"mean={mean:.3f}, std={std:.3f}")
     plt.xlabel(f"{_dca_score}")
     plt.ylabel("Pdf")
