@@ -148,13 +148,14 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, NR=
                 assert df_dca is not None
                 print(f"rep: {rep_id} model: {n_degraded_seqs} neff: {neff}  L: {_ncols} map:{map_idx}")
                 if plots:
-                    # plot_score_distribution(dca_score, n_degraded_seqs, df_dca, neff, ncols, dir_contact_map)
+                    analysis.plots.plot_score_distribution(dca_score, n_degraded_seqs, df_dca, neff,
+                                                           _ncols, dir_contact_map, bin=100, extra_text=prefix)
                     if zfilter:
                         print("zfilter")
                         analysis.plots.plot_dist_distribution(df_dca[:750], neff,
                                                               _ncols, dir_contact_map, extra_text=prefix)
                         analysis.plots.plot_score_distribution("zscore", n_degraded_seqs, df_dca, neff, _ncols,
-                                                               dir_contact_map, extra_text=prefix)
+                                                               dir_contact_map, bin=50, extra_text=prefix)
 
                 for k in range(len(thresholds_list)):
                     threshold_value = thresholds_list[k]

@@ -42,20 +42,23 @@ def compare_contact_map(dca_dataframe, dca_filtered, pdb_dataframe, pdbid, dista
     plt.close()
 
 
-def plot_score_distribution(dca_score, n_seqs, dca_dataframe, n_effective, n_res, img_dir, extra_text=None):
+def plot_score_distribution(_dca_score, n_seqs, dca_dataframe, n_effective, n_res, img_dir, bin=50, extra_text=None):
     plt.figure(n_seqs, figsize=(5, 5))
-    heights, bins, patches = plt.hist(dca_dataframe[dca_score], bins=50)
+    _dca_score = _dca_score.lower()
+    heights, bins, patches = plt.hist(dca_dataframe[_dca_score], density=True, bins=bin)
     plt.semilogy()
     plt.title(f"Neff={n_effective:.2f}, Neff/L={n_effective / n_res:.2f}")
-    plt.xlim(-10, 21)
-    plt.xticks(np.arange(-10, 24, 3))
-    mean = dca_dataframe[dca_score].mean()
-    std = dca_dataframe[dca_score].std()
-    plt.vlines(mean, 0, 1000, color="black", linestyles="dashed", label=f"mean={mean:.3f}, std={std:.3f}")
-    plt.xlabel("Z-score")
-    plt.ylabel("Counts")
+    # plt.xlim(-10, 21)
+    # plt.xticks(np.arange(-10, 24, 3))
+    mean = dca_dataframe[_dca_score].mean()
+    std = dca_dataframe[_dca_score].std()
+
+    assert 1 <= np.abs((bins[2] - bins[1]) * np.sum(heights)) <= 1.04
+    plt.vlines(mean, 0, max(heights), color="black", linestyles="dashed", label=f"mean={mean:.3f}, std={std:.3f}")
+    plt.xlabel(f"{_dca_score}")
+    plt.ylabel("Pdf")
     plt.legend(loc="upper right")
-    img_out = os.path.join(img_dir, f"{extra_text}_{dca_score}_neff{n_effective:.2f}.png")
+    img_out = os.path.join(img_dir, f"{extra_text}_{_dca_score}_neff{n_effective:.2f}.png")
     plt.savefig(img_out, format="png", dpi=200, bbox_inches='tight')
     plt.close()
 

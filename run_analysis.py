@@ -8,12 +8,12 @@ import data.tools.pdb
 from analysis.plots import (plot_average_ppv, multiple_plot_average_ppv, plot_avg_zscore, plot_neff_vs_zscore,
                             plot_avg_dist, plot_fraction_below_threshold, plot_ptp)
 
-sysid = sys.argv[1].strip(".fa")
-root = os.path.join("/scratch", "kmm5", "single")
-dir_pdb = os.path.join("/scratch", "kmm5", "pdb")
-# sysid = "1cc8A"
-# root = os.path.join("tests", "single")
-# dir_pdb = "pdb"
+# sysid = sys.argv[1].strip(".fa")
+# root = os.path.join("/scratch", "kmm5", "single")
+# dir_pdb = os.path.join("/scratch", "kmm5", "pdb")
+sysid = "1cc8A"
+root = os.path.join("tests", "single")
+dir_pdb = "pdb"
 print(f"System ID: {sysid}\nPath: {root}")
 dir_sys = os.path.join(root, "systems", sysid)
 dir_out = os.path.join(dir_sys, "results")
@@ -49,13 +49,14 @@ import analysis.plots
 from analysis.validation import calculate_ppv
 
 if plots:
-    # plot_score_distribution(dca_score, n_degraded_seqs, df_dca, neff, ncols, dir_contact_map)
+    analysis.plots.plot_score_distribution(dca_score, n_degraded_seqs, df_dca, neff,
+                                           _ncols, dir_contact_map, bin=100, extra_text=prefix)
     if zfilter:
         print("zfilter")
         analysis.plots.plot_dist_distribution(df_dca[:750], neff,
                                               _ncols, dir_contact_map, extra_text=prefix)
         analysis.plots.plot_score_distribution("zscore", n_degraded_seqs, df_dca, neff, _ncols,
-                                               dir_contact_map, extra_text=prefix)
+                                               dir_contact_map, bin=50, extra_text=prefix)
 
 pos_pred_list = np.zeros(len(thresholds_list))
 pair_rank_array = np.zeros_like(pos_pred_list)
