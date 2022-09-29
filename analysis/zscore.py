@@ -20,3 +20,10 @@ def zscore_calculation(dca_dataframe, dca_score, reference):
 
 def calculate_average_zscore(array):
     return np.mean(array, axis=0), np.std(array, axis=0)
+
+
+def make_reference(_list, score_type, outf):
+    ref = np.concatenate(_list)
+    np.save(outf, ref)
+    return ref
+
