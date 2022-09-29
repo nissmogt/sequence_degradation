@@ -34,7 +34,7 @@ def process_dca(root, _sysid, _df_pdb, _nseqs, _neff, _rep, zcalc=False, shift=0
     if zcalc:
         df_header = ["i", "j", "di", "zscore", "diapc", "mi", "d", "si", "sj", "chain_1", "chain_2", "resnames",
                      "atom_id"]
-        zscore_reference = np.load(os.path.join("assets", f"monomer_DIAPC_scores.npy"))
+        zscore_reference = np.load(os.path.join("assets", f"monomer_diapc.npy"))
         df_z = d.zscore(df_dca, zscore_reference)
         df_z.to_csv(outfile, sep='\t', index=False, header=df_header, float_format='%.4f')
 
