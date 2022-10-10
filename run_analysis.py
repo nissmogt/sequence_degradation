@@ -43,7 +43,7 @@ prefix = ""
 plots = True
 zfilter = True
 dca_score = "DIAPC"
-distance_cutoff = 8
+distance_cutoff = 10
 map_idx = 0
 import analysis.plots
 from analysis.validation import calculate_ppv
