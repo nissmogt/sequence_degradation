@@ -39,11 +39,11 @@ _ncols = seq_l
 dir_contact_map = os.path.join(dir_sys, "images")
 if not os.path.exists(dir_contact_map):
     os.makedirs(dir_contact_map)
-prefix = ""
 plots = True
 zfilter = True
 dca_score = "DIAPC"
 distance_cutoff = 10
+prefix = f"{distance_cutoff}A"
 map_idx = 0
 import analysis.plots
 from analysis.validation import calculate_ppv
