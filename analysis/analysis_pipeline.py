@@ -63,9 +63,9 @@ def pipeline_replicates(_dca_dir, _sysid, _ncols, thresholds_list, npairs=0, NR=
     :param thresholds_list: List; List of Zscore cutoffs
     :return:
     """
-    distance_cutoff = 8
-    # prefix = f"{distance_cutoff}A"
-    prefix = 0
+    distance_cutoff = 10
+    prefix = f"{distance_cutoff}A"
+    # prefix = 0
     dir_system = os.path.join(_dca_dir, "systems", _sysid)
     dir_replicates = os.path.join(dir_system, "replicates")
     dir_results = os.path.join(dir_system, "results")
