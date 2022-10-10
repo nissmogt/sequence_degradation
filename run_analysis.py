@@ -64,7 +64,7 @@ if plots:
     # plot contact map without filter
     analysis.plots.compare_contact_map(df_dca, df_dca[:10], df_pdb, sysid, distance_cutoff,
                                        neff, 0, _ncols, map_idx,
-                                       dir_contact_map, extra_text="top_10")
+                                       dir_contact_map, extra_text=f"{prefix}_top_10")
 for k in range(len(thresholds_list)):
     threshold_value = thresholds_list[k]
     if zfilter:
