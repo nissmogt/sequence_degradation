@@ -35,6 +35,8 @@ og_ref = np.load(os.path.join("assets", "monomer_DIAPC_scores_76.npy"))
 ref_file = os.path.join("assets", "monomer_diapc.npy")
 reference = analysis.zscore.make_reference(scores, "diapc", outf=ref_file)
 # reference = np.load(ref_file)
+diff = reference.max() - reference.min()
+og_diff = og_ref.max() - og_ref.min()
 plt.figure(0)
 h1 = plt.hist(reference, density=True, bins=50,
               label=f"148 systems mean={np.mean(reference):.4f} std={np.std(reference):.4f}")
