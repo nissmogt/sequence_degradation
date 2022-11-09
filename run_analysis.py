@@ -93,10 +93,10 @@ for k in range(len(thresholds_list)):
     else:
         pos_pred_list[k] = 0
 
-output_ppv = os.path.join(dir_out, f"{sysid}_ppv_zscore_{dca_score}_100reps.npy")
-output_pair_rank = os.path.join(dir_out, f"{sysid}_ppv_pairrank_z_{dca_score}_reps100.npy")
-output_z = os.path.join(dir_out, f"avg_z_{sysid}_100reps.npy")
-output_dist = os.path.join(dir_out, f"avg_dist_{sysid}_100reps.npy")
+output_ppv = os.path.join(dir_out, f"{sysid}_d{distance_cutoff}_ppv_zscore_{dca_score}_100reps.npy")
+output_pair_rank = os.path.join(dir_out, f"{sysid}_d{distance_cutoff}_ppv_pairrank_z_{dca_score}_reps100.npy")
+output_z = os.path.join(dir_out, f"avg_z_{sysid}_d{distance_cutoff}_100reps.npy")
+output_dist = os.path.join(dir_out, f"avg_dist_{sysid}_d{distance_cutoff}_100reps.npy")
 np.save(output_ppv, pos_pred_list)
 np.save(output_pair_rank, pair_rank_array)
 np.save(output_z, topn_z_array)
