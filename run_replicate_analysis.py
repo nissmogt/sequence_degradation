@@ -17,7 +17,7 @@ neff_file = os.path.join(os.path.dirname(msa_file), f"replicates/neff_array.npy"
 seq_l = check_length(msa_file)
 threshold_values = [12, 10, 9, 8, 5.6, 4.5, 4, 3.5, 2.5, 1]
 
-n = 60
+n = 50
 ppv, pred_rank, top_z, top_dist = pipeline_replicates(dca_dir, sysid, seq_l, threshold_values, npairs=0, NR=n,
                                                       zfilter=True, plots=True, passthrough=False)
 neff = np.load(neff_file)
