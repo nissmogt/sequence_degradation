@@ -20,16 +20,16 @@ threshold_values = [12, 10, 9, 8, 5.6, 4.5, 4, 3.5, 2.5, 1]
 number_replicates = 50
 dis_list = [6, 8, 10, 12]
 for dcut in dis_list:
+    prefix = f"{dcut}A"
     ppv, pred_rank, top_z, top_dist = pipeline_replicates(dca_dir, sysid, seq_l, threshold_values, dcut, npairs=0,
                                                           NR=number_replicates, zfilter=True, plots=True, passthrough=False)
-    neff = np.load(neff_file)
-    neff = neff[:, :-1]
-    avg_neff = np.mean(neff[:number_replicates, :], axis=0)
-    avg_dist = np.mean(top_dist[:number_replicates, :, :], axis=0)
-    plot_fraction_below_threshold(avg_dist, avg_neff, seq_l, sysid, dir_out, extra_text="", save=True)
-    plot_avg_zscore(top_z[:number_replicates, :, :], avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
-    plot_neff_vs_zscore(top_z[:number_replicates, :, :], avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
-    plot_ptp(top_z[:number_replicates, :, :], avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
-    plot_avg_dist(top_dist[:number_replicates, :, :], 8, avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
-    multiple_plot_average_ppv(ppv[:, :number_replicates, :], neff[:number_replicates, :], sysid, seq_l, threshold_values, dir_out,
-                              norm=1, extra_text="8A", save=True)
+    # neff = np.load(neff_file)
+    # neff = neff[:, :-1]
+    # avg_neff = np.mean(neff[:number_replicates, :], axis=0)
+    # avg_dist = np.mean(top_dist[:number_replicates, :, :], axis=0)
+    # plot_fraction_below_threshold(avg_dist, avg_neff, seq_l, sysid, dir_out, extra_text=prefix, save=True)
+    # plot_avg_zscore(top_z[:number_replicates, :, :], avg_neff, sysid, seq_l, dir_out, extra_text=prefix, save=True)
+    # plot_neff_vs_zscore(top_z[:number_replicates, :, :], avg_neff, sysid, seq_l, dir_out, extra_text=prefix, save=True)
+    # plot_avg_dist(top_dist[:number_replicates, :, :], dcut, avg_neff, sysid, seq_l, dir_out, extra_text=prefix, save=True)
+    # multiple_plot_average_ppv(ppv[:, :number_replicates, :], neff[:number_replicates, :], sysid, seq_l,
+    #                           threshold_values, dir_out, norm=1, extra_text=prefix, save=True)
