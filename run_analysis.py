@@ -51,6 +51,8 @@ from analysis.validation import calculate_ppv
 if plots:
     analysis.plots.plot_score_distribution(dca_score, n_degraded_seqs, df_dca, neff,
                                            _ncols, dir_contact_map, bin=100, extra_text=prefix)
+    analysis.plots.plot_score_distribution("di", n_degraded_seqs, df_dca, neff,
+                                           _ncols, dir_contact_map, bin=100, extra_text=prefix)
     if zfilter:
         print("zfilter")
         analysis.plots.plot_dist_distribution(df_dca[:750], neff,
