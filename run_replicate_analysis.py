@@ -17,17 +17,17 @@ neff_file = os.path.join(os.path.dirname(msa_file), f"replicates/neff_array.npy"
 seq_l = check_length(msa_file)
 threshold_values = [12, 10, 9, 8, 5.6, 4.5, 4, 3.5, 2.5, 1]
 
-n = 50
-ppv, pred_rank, top_z, top_dist = pipeline_replicates(dca_dir, sysid, seq_l, threshold_values, npairs=0, NR=n,
+number_replicates = 50
+ppv, pred_rank, top_z, top_dist = pipeline_replicates(dca_dir, sysid, seq_l, threshold_values, npairs=0, NR=number_replicates,
                                                       zfilter=True, plots=True, passthrough=False)
 neff = np.load(neff_file)
 neff = neff[:, :-1]
-avg_neff = np.mean(neff[:n, :], axis=0)
-avg_dist = np.mean(top_dist[:n, :, :], axis=0)
+avg_neff = np.mean(neff[:number_replicates, :], axis=0)
+avg_dist = np.mean(top_dist[:number_replicates, :, :], axis=0)
 plot_fraction_below_threshold(avg_dist, avg_neff, seq_l, sysid, dir_out, extra_text="", save=True)
-plot_avg_zscore(top_z[:n, :, :], avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
-plot_neff_vs_zscore(top_z[:n, :, :], avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
-plot_ptp(top_z[:n, :, :], avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
-plot_avg_dist(top_dist[:n, :, :], 8, avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
-multiple_plot_average_ppv(ppv[:, :n, :], neff[:n, :], sysid, seq_l, threshold_values, dir_out,
+plot_avg_zscore(top_z[:number_replicates, :, :], avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
+plot_neff_vs_zscore(top_z[:number_replicates, :, :], avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
+plot_ptp(top_z[:number_replicates, :, :], avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
+plot_avg_dist(top_dist[:number_replicates, :, :], 8, avg_neff, sysid, seq_l, dir_out, extra_text="", save=True)
+multiple_plot_average_ppv(ppv[:, :number_replicates, :], neff[:number_replicates, :], sysid, seq_l, threshold_values, dir_out,
                           norm=1, extra_text="8A", save=True)
