@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from msa.tools.check_length import check_length
+from analysis.plots import zscore_vs_distance
 import os
 
 GOOGLEDRIVE_PATH = os.path.join("/Volumes", "GoogleDrive", "My Drive", "sequence_degradation")
@@ -27,21 +28,4 @@ for system_id in sysid_list[:10]:
     df = pd.read_csv(dca_file, delimiter="\t")
     df_compare = pd.read_csv(dca_file_compare, delimiter="\t")
 
-    plt.scatter(df["zscore"], df["d"], color="indigo", label="148 psicov monomers", marker="s")
-    # plt.scatter(df_compare["zscore"], df_compare["d"], color="yellow", edgecolors="black", alpha=0.7,
-    #             label="76 evcoupling (monomers)")
-    # max_z = max(max(df["zscore"]), max(df_compare["zscore"]))
-    max_z = max(df["zscore"])
-    plt.hlines(8, 0, max_z, colors="xkcd:green", linestyles="dashed")
-    plt.hlines(10, 0, max_z, colors="xkcd:black", linestyles="dashed")
-    plt.hlines(12, 0, max_z, colors="xkcd:red", linestyles="dashed")
-    plt.legend(loc="best")
-    plt.xlabel("zscore")
-    plt.ylabel("distance (A)")
-    plt.title(f"{system_id} Neff/L={neff/seq_l:.2f}")
-    # img_path = os.path.join(f"{path_results}", "images", f"compare_z_distance_evfold_psicov_systems.png")
-    img_path = os.path.join(f"{path_results}", "images", f"z_vs_distance.png")
-    plt.savefig(img_path, format="png", dpi=150,
-                bbox_inches='tight')
-    # plt.show()
-    plt.close()
+    zscore_vs_distance(df, system_id, neff, seq_l, path_results)
