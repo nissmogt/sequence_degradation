@@ -44,7 +44,7 @@ class System:
         print(f"SYS: {self._dir_sys}, RESULTS: {self._dir_results}, "
               f"AVG_RES: {self._dir_avg_results}, REPLICATES: {self._dir_replicates}")
 
-    def filter(self, run=True):
+    def filter(self, pct_gaps=0.2, run=True):
         """
         Applies 25% gap filter to msa.
         """
@@ -56,7 +56,7 @@ class System:
             print(f"{self._raw_msa} does not exist.")
         if run:
             self._filtered_msa, self._nseq, percent_gaps = msa.tools.gap_filter.gap_filter(self._raw_msa,
-                                                                                           0.25, self._dir_sys)
+                                                                                           pct_gaps, self._dir_sys)
 
     def replicates(self, run=True):
         """
