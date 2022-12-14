@@ -9,7 +9,7 @@ from analysis.plots import (plot_average_ppv, multiple_plot_average_ppv, plot_av
                             plot_avg_dist, plot_fraction_below_threshold, plot_ptp)
 
 sysid = sys.argv[1].strip(".fa")
-pct_gaps = float(sys.argv[2])
+pct_gaps = int(sys.argv[2])
 root = os.path.join("/scratch", "kmm5", "single")
 dir_pdb = os.path.join("/scratch", "kmm5", "pdb")
 # sysid = "1cc8A"
