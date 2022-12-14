@@ -21,6 +21,8 @@ s.set_sysid(sysid)
 s.set_align_dir(os.path.join(root, aln_dir))
 s.make_new_dirs(root, out, replicates=False)
 s.check_dir()
-s.filter(run=True)
+# for a range of pct_gaps [0.05, 0.1, 0.15, 0.2]
+gap_list = [0.05, 0.1, 0.15, 0.2]
+s.filter(run=True, pct_gaps=gap_list[0])
 neff = s.run_inference(_len_list=None, _nreplicates=1, _dir_dca=matlab_dir, passthrough=False)
 print(neff)
