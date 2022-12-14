@@ -9,6 +9,7 @@ from analysis.plots import (plot_average_ppv, multiple_plot_average_ppv, plot_av
                             plot_avg_dist, plot_fraction_below_threshold, plot_ptp)
 
 sysid = sys.argv[1].strip(".fa")
+pct_gaps = float(sys.argv[2])
 root = os.path.join("/scratch", "kmm5", "single")
 dir_pdb = os.path.join("/scratch", "kmm5", "pdb")
 # sysid = "1cc8A"
@@ -17,7 +18,7 @@ dir_pdb = os.path.join("/scratch", "kmm5", "pdb")
 print(f"System ID: {sysid}\nPath: {root}")
 dir_sys = os.path.join(root, "systems", sysid)
 dir_out = os.path.join(dir_sys, "results")
-msa_file = os.path.join(dir_sys, f"{sysid}_filtered_25.fasta")
+msa_file = os.path.join(dir_sys, f"{sysid}_filtered_{pct_gaps}.fasta")
 
 neff_file = os.path.join(dir_sys, "neff_array.npy")
 neff = np.load(neff_file)
